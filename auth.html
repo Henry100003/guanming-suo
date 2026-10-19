@@ -1,0 +1,582 @@
+<!doctype html><html><head><meta charset=utf8><meta name=viewport content="width=device-width,initial-scale=1"><style>:root{color-scheme:light}body{margin:0;padding:0;font:14px -apple-system,BlinkMacSystemFont,sans-serif;background:#faf9f5;color:#141413}img{max-width:100%}[hidden]:not([hidden=until-found]){display:none!important}</style></head><body>
+<title>觀命所登入</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Noto+Serif+TC:wght@500;600;700&family=Noto+Sans+TC:wght@400;500;600;700&family=Cormorant+Garamond:ital,wght@0,500;0,600;1,500;1,600&display=swap">
+<style>
+  :root {
+    --void: #0a0d18;
+    --void-raised: #141a2c;
+    --ink: #ece7da;
+    --ink-soft: #a3a4c4;
+    --ink-faint: #8386ad;
+    --brass: #c99a4c;
+    --brass-bright: #e6c383;
+    --verdigris: #5c9c8c;
+    --danger: #d97a7a;
+    --line: rgba(236,231,217,0.13);
+    --line-strong: rgba(236,231,217,0.24);
+    --shadow: 0 20px 60px -25px rgba(0,0,0,0.7);
+  }
+  * { box-sizing: border-box; }
+  [hidden] { display: none !important; }
+  body {
+    margin: 0; min-height: 100vh; position: relative;
+    background: var(--void); color: var(--ink);
+    font-family: "Noto Sans TC", "PingFang TC", "Microsoft JhengHei", sans-serif;
+    display: flex; align-items: center; justify-content: center;
+    padding: 3rem 1.25rem;
+    overflow-x: hidden;
+  }
+  h1 { font-family: "Noto Serif TC", serif; margin: 0; }
+  .num, .eyebrow { font-family: "Cormorant Garamond", serif; font-variant-numeric: tabular-nums; }
+  a { color: var(--brass); text-decoration: none; }
+  a:hover { color: var(--brass-bright); }
+  button { font-family: inherit; cursor: pointer; }
+  :focus-visible { outline: 2px solid var(--brass-bright); outline-offset: 3px; }
+
+  canvas#starfield { position: fixed; inset: 0; width: 100%; height: 100%; z-index: 0; }
+
+  .lang-switch { position: fixed; top: 1.2rem; right: 1.2rem; z-index: 2; display: flex; gap: 2px; background: var(--void-raised); border: 1px solid var(--line-strong); border-radius: 999px; padding: 2px; }
+  .lang-switch button { background: none; border: none; color: var(--ink-faint); font-size: 0.72rem; font-weight: 600; padding: 0.32rem 0.6rem; border-radius: 999px; }
+  .lang-switch button[aria-pressed="true"] { background: var(--brass); color: #241a08; }
+  .lang-switch button:hover:not([aria-pressed="true"]) { color: var(--ink); }
+
+  .frame { position: relative; z-index: 1; width: 100%; max-width: 420px; display: flex; flex-direction: column; align-items: center; }
+  .brand { display: flex; align-items: center; gap: 0.55rem; margin-bottom: 2.2rem; }
+  .brand svg { width: 24px; height: 24px; }
+  .brand span { font-family: "Noto Serif TC", serif; font-weight: 700; font-size: 1.1rem; }
+
+  .card {
+    width: 100%;
+    background: linear-gradient(180deg, var(--void-raised), #0d1220);
+    border: 1px solid var(--line-strong);
+    border-radius: 12px;
+    box-shadow: var(--shadow);
+    padding: 1.9rem 1.9rem 2.1rem;
+  }
+
+  .tabs { display: flex; background: #0a0e1c; border: 1px solid var(--line-strong); border-radius: 8px; padding: 3px; margin-bottom: 1.6rem; }
+  .tabs button {
+    flex: 1; background: transparent; border: none; color: var(--ink-faint);
+    padding: 0.55rem 0; border-radius: 6px; font-size: 0.9rem; font-weight: 600;
+    transition: background 0.2s ease, color 0.2s ease;
+  }
+  .tabs button[aria-selected="true"] { background: var(--void-raised); color: var(--brass-bright); box-shadow: 0 1px 0 var(--line-strong); }
+
+  .headline { margin-bottom: 1.4rem; }
+  .headline .eyebrow { display: block; font-style: italic; font-size: 0.95rem; color: var(--verdigris); margin-bottom: 0.3rem; }
+  .headline h1 { font-size: 1.4rem; font-weight: 700; }
+  .plan-badge {
+    display: inline-block; margin-top: 0.6rem; font-size: 0.76rem; padding: 0.28rem 0.7rem;
+    border-radius: 999px; border: 1px solid var(--line-strong); color: var(--ink-soft);
+  }
+  .plan-badge.premium { border-color: rgba(201,154,76,0.4); color: var(--brass-bright); }
+
+  form { display: flex; flex-direction: column; gap: 1rem; }
+  .field { display: flex; flex-direction: column; gap: 0.4rem; }
+  .field label { font-size: 0.8rem; color: var(--ink-faint); letter-spacing: 0.02em; }
+  .field .input-row { position: relative; display: flex; align-items: center; }
+  .field input {
+    width: 100%; background: #0a0e1c; border: 1px solid var(--line-strong); border-radius: 6px;
+    padding: 0.68rem 0.8rem; color: var(--ink); font-size: 0.94rem; font-family: "Noto Sans TC", sans-serif;
+  }
+  .field input:focus { border-color: var(--brass); }
+  .field input::placeholder { color: var(--ink-faint); }
+  .field.invalid input { border-color: var(--danger); }
+  .field .msg { font-size: 0.76rem; color: var(--danger); min-height: 1em; }
+  .toggle-visibility {
+    position: absolute; right: 0.6rem; background: none; border: none; color: var(--ink-faint);
+    padding: 0.2rem; display: flex; align-items: center;
+  }
+  .toggle-visibility:hover { color: var(--ink); }
+  .toggle-visibility svg { width: 18px; height: 18px; }
+
+  .row-between { display: flex; align-items: center; justify-content: space-between; font-size: 0.82rem; color: var(--ink-soft); }
+  .checkline { display: flex; align-items: flex-start; gap: 0.55rem; font-size: 0.82rem; color: var(--ink-soft); line-height: 1.5; }
+  .checkline input { margin-top: 0.2rem; accent-color: var(--brass); }
+
+  .btn-primary {
+    background: var(--brass); color: #241a08; border: none; border-radius: 7px;
+    padding: 0.78rem 1rem; font-size: 0.96rem; font-weight: 700;
+    display: flex; align-items: center; justify-content: center; gap: 0.5rem;
+    transition: background 0.2s ease;
+  }
+  .btn-primary:hover { background: var(--brass-bright); }
+  .btn-primary:disabled { opacity: 0.6; cursor: default; }
+
+  .divider { display: flex; align-items: center; gap: 0.8rem; margin: 1.3rem 0 1.1rem; color: var(--ink-faint); font-size: 0.78rem; }
+  .divider::before, .divider::after { content: ""; flex: 1; height: 1px; background: var(--line-strong); }
+
+  .btn-secondary {
+    width: 100%; background: transparent; border: 1px solid var(--line-strong); color: var(--ink);
+    border-radius: 7px; padding: 0.7rem 1rem; font-size: 0.9rem; font-weight: 500;
+    display: flex; align-items: center; justify-content: center; gap: 0.6rem;
+  }
+  .btn-secondary:hover { border-color: var(--ink-faint); }
+  .btn-secondary svg { width: 17px; height: 17px; }
+
+  .switch-line { margin-top: 1.5rem; text-align: center; font-size: 0.85rem; color: var(--ink-soft); }
+  .switch-line button { background: none; border: none; padding: 0; font: inherit; color: var(--brass); }
+  .link-btn { background: none; border: none; padding: 0; font: inherit; color: var(--brass); cursor: pointer; }
+  .link-btn:hover { color: var(--brass-bright); }
+  .success .continue-btn { margin-top: 1.3rem; }
+
+  .success { display: none; text-align: center; padding: 1rem 0 0.4rem; }
+  .success.show { display: block; }
+  .success svg { width: 40px; height: 40px; color: var(--verdigris); margin-bottom: 0.9rem; }
+  .success h2 { font-family: "Noto Serif TC", serif; font-size: 1.15rem; margin-bottom: 0.5rem; }
+  .success p { color: var(--ink-soft); font-size: 0.88rem; }
+
+  .legal-note { margin-top: 1.6rem; max-width: 380px; text-align: center; font-size: 0.74rem; color: var(--ink-faint); line-height: 1.7; }
+
+  @media (prefers-reduced-motion: reduce) { * { transition: none !important; } }
+</style>
+
+<canvas id="starfield" aria-hidden="true"></canvas>
+<div class="lang-switch" role="group" aria-label="Language">
+  <button data-lang="zh-TW" aria-pressed="true">繁</button>
+  <button data-lang="zh-CN" aria-pressed="false">简</button>
+  <button data-lang="en" aria-pressed="false">EN</button>
+  <button data-lang="ja" aria-pressed="false">日</button>
+</div>
+
+<div class="frame">
+  <a class="brand" id="brand-link" href="#">
+    <svg viewBox="0 0 32 32" fill="none" aria-hidden="true">
+      <circle cx="16" cy="16" r="10.5" stroke="var(--brass)" stroke-width="1.1"/>
+      <ellipse cx="16" cy="16" rx="10.5" ry="4" stroke="var(--verdigris)" stroke-width="1.1"/>
+      <circle cx="16" cy="16" r="1.6" fill="var(--brass-bright)"/>
+    </svg>
+    <span data-i18n="brand">觀命所</span>
+  </a>
+
+  <div class="card">
+    <div class="tabs" role="tablist" aria-label="Login or sign up">
+      <button role="tab" id="tab-login" aria-selected="true" data-i18n="tab.login">登入</button>
+      <button role="tab" id="tab-signup" aria-selected="false" data-i18n="tab.signup">註冊</button>
+    </div>
+
+    <div id="form-view">
+      <div class="headline">
+        <span class="eyebrow" id="headline-eyebrow" data-i18n="headline.eyebrow.login">歡迎回到星圖校準台</span>
+        <h1 id="headline-title" data-i18n="headline.title.login">登入帳號</h1>
+        <span class="plan-badge" id="plan-badge" hidden></span>
+      </div>
+
+      <form id="auth-form" novalidate>
+        <div class="field" id="field-name" hidden>
+          <label for="f-name" data-i18n="field.name">暱稱</label>
+          <div class="input-row"><input type="text" id="f-name" data-i18n-placeholder="field.namePh" placeholder="怎麼稱呼你"></div>
+          <span class="msg"></span>
+        </div>
+
+        <div class="field" id="field-email">
+          <label for="f-email" data-i18n="field.email">Email</label>
+          <div class="input-row"><input type="email" id="f-email" placeholder="you@example.com"></div>
+          <span class="msg"></span>
+        </div>
+
+        <div class="field" id="field-password">
+          <label for="f-password" data-i18n="field.password">密碼</label>
+          <div class="input-row">
+            <input type="password" id="f-password" data-i18n-placeholder="field.passwordPh" placeholder="至少 8 個字元">
+            <button type="button" class="toggle-visibility" data-target="f-password" aria-label="Show password">
+              <svg viewBox="0 0 20 20" fill="none" aria-hidden="true"><path d="M2 10s3-5.5 8-5.5 8 5.5 8 5.5-3 5.5-8 5.5-8-5.5-8-5.5z" stroke="currentColor" stroke-width="1.3"/><circle cx="10" cy="10" r="2.2" stroke="currentColor" stroke-width="1.3"/></svg>
+            </button>
+          </div>
+          <span class="msg"></span>
+        </div>
+
+        <div class="field" id="field-confirm" hidden>
+          <label for="f-confirm" data-i18n="field.confirm">確認密碼</label>
+          <div class="input-row">
+            <input type="password" id="f-confirm" data-i18n-placeholder="field.confirmPh" placeholder="再輸入一次密碼">
+            <button type="button" class="toggle-visibility" data-target="f-confirm" aria-label="Show password">
+              <svg viewBox="0 0 20 20" fill="none" aria-hidden="true"><path d="M2 10s3-5.5 8-5.5 8 5.5 8 5.5-3 5.5-8 5.5-8-5.5-8-5.5z" stroke="currentColor" stroke-width="1.3"/><circle cx="10" cy="10" r="2.2" stroke="currentColor" stroke-width="1.3"/></svg>
+            </button>
+          </div>
+          <span class="msg"></span>
+        </div>
+
+        <div class="row-between" id="login-extras">
+          <label style="display:flex;align-items:center;gap:0.45rem;"><input type="checkbox" style="accent-color:var(--brass)"> <span data-i18n="field.remember">記住我</span></label>
+          <button type="button" class="link-btn" id="forgot-btn" data-i18n="field.forgot">忘記密碼？</button>
+        </div>
+
+        <div class="field" id="field-terms" hidden>
+          <label class="checkline">
+            <input type="checkbox" id="f-terms">
+            <span data-i18n="field.terms" data-i18n-html="1">我已閱讀並同意<a href="#">服務條款</a>與<a href="#">隱私權政策</a>，了解生辰資料僅用於產出個人命理報告</span>
+          </label>
+          <span class="msg"></span>
+        </div>
+
+        <button type="submit" class="btn-primary" id="submit-btn" data-i18n="submit.login">登入</button>
+      </form>
+
+      <div class="divider" data-i18n="divider.or">或</div>
+      <button type="button" class="btn-secondary">
+        <svg viewBox="0 0 20 20" aria-hidden="true"><path fill="#EA4335" d="M10 8.18v3.71h5.2c-.23 1.2-1.62 3.53-5.2 3.53-3.13 0-5.68-2.59-5.68-5.42S6.87 4.58 10 4.58c1.78 0 2.97.76 3.65 1.41l2.49-2.4C14.63 2.06 12.5 1.2 10 1.2 5.2 1.2 1.3 5.1 1.3 10s3.9 8.8 8.7 8.8c5.02 0 8.35-3.53 8.35-8.5 0-.57-.06-1-.14-1.42H10z"/></svg>
+        <span data-i18n="google.btn">以 Google 繼續</span>
+      </button>
+
+      <p class="switch-line" id="switch-line"></p>
+    </div>
+
+    <div id="reset-view" hidden>
+      <div class="headline">
+        <span class="eyebrow" data-i18n="reset.eyebrow">重新取得存取權</span>
+        <h1 data-i18n="reset.title">重設密碼</h1>
+      </div>
+      <form id="reset-form" novalidate>
+        <div class="field" id="field-reset-email">
+          <label for="f-reset-email" data-i18n="field.email">Email</label>
+          <div class="input-row"><input type="email" id="f-reset-email" placeholder="you@example.com"></div>
+          <span class="msg"></span>
+        </div>
+        <button type="submit" class="btn-primary" data-i18n="reset.submit">送出重設連結</button>
+      </form>
+      <p class="switch-line"><button type="button" class="link-btn" id="reset-back-btn" data-i18n="reset.back">返回登入</button></p>
+    </div>
+
+    <div class="success" id="reset-sent-view" hidden>
+      <svg viewBox="0 0 32 32" fill="none" aria-hidden="true"><circle cx="16" cy="16" r="14" stroke="currentColor" stroke-width="1.3"/><path d="M10 16.5l4 4 8-8.5" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></svg>
+      <h2 data-i18n="reset.sentTitle">重設連結已寄出</h2>
+      <p id="reset-sent-sub"></p>
+      <p class="switch-line" style="margin-top:1.2rem"><button type="button" class="link-btn" id="reset-sent-back-btn" data-i18n="reset.back">返回登入</button></p>
+    </div>
+
+    <div class="success" id="success-view">
+      <svg viewBox="0 0 32 32" fill="none" aria-hidden="true"><circle cx="16" cy="16" r="14" stroke="currentColor" stroke-width="1.3"/><path d="M10 16.5l4 4 8-8.5" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></svg>
+      <h2 id="success-title">登入成功</h2>
+      <p id="success-sub">正在為你校準星圖，請稍候。</p>
+      <button type="button" class="btn-primary continue-btn" id="continue-btn" data-i18n="continue.btn">前往你的星圖報告 →</button>
+    </div>
+  </div>
+
+  <p class="legal-note" data-i18n="legal.note">觀命所僅以你提供的帳號資訊建立會員身分，生辰命盤資料另行加密儲存，可隨時於帳戶設定內查詢或刪除。</p>
+</div>
+
+<script>
+(function () {
+  var reduceMotion = window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+  var LANDING_URL = 'index.html';
+  var REPORT_URL = 'report.html';
+  var incomingParams = new URLSearchParams(location.search);
+  var carried = { d: incomingParams.get('d'), t: incomingParams.get('t'), c: incomingParams.get('c') };
+  var initialMode = incomingParams.get('mode') === 'signup' ? 'signup' : 'login';
+  var planParam = incomingParams.get('plan') === 'premium' ? 'premium' : 'free';
+
+  document.getElementById('brand-link').href = LANDING_URL;
+
+  /* ================= i18n ================= */
+  var DICT = {
+    "zh-TW": {
+      brand: "觀命所", "tab.login": "登入", "tab.signup": "註冊",
+      "headline.eyebrow.login": "歡迎回到星圖校準台", "headline.title.login": "登入帳號",
+      "headline.eyebrow.signup": "開始你的第一份星圖", "headline.title.signup": "建立帳號",
+      "field.name": "暱稱", "field.namePh": "怎麼稱呼你",
+      "field.email": "Email", "field.password": "密碼", "field.passwordPh": "至少 8 個字元",
+      "field.confirm": "確認密碼", "field.confirmPh": "再輸入一次密碼",
+      "field.remember": "記住我", "field.forgot": "忘記密碼？",
+      "field.terms": "我已閱讀並同意<a href=\"#\">服務條款</a>與<a href=\"#\">隱私權政策</a>，了解生辰資料僅用於產出個人命理報告",
+      "submit.login": "登入", "submit.signup": "建立帳號",
+      "divider.or": "或", "google.btn": "以 Google 繼續",
+      "switch.toSignup": "還沒有帳號？", "switch.toSignupBtn": "建立一個",
+      "switch.toLogin": "已經有帳號了？", "switch.toLoginBtn": "直接登入",
+      "success.title.login": "登入成功", "success.sub.login": "正在為你校準星圖，請稍候。",
+      "success.title.signup": "帳號建立成功", "success.sub.signup": "歡迎加入觀命所，正在為你準備第一份星圖。",
+      "legal.note": "觀命所僅以你提供的帳號資訊建立會員身分，生辰命盤資料另行加密儲存，可隨時於帳戶設定內查詢或刪除。",
+      "err.email": "請輸入正確的 Email 格式", "err.password": "密碼至少需要 8 個字元",
+      "err.name": "請輸入暱稱", "err.confirm": "兩次輸入的密碼不一致", "err.terms": "請先閱讀並同意服務條款",
+      "reset.eyebrow": "重新取得存取權", "reset.title": "重設密碼", "reset.submit": "送出重設連結", "reset.back": "返回登入",
+      "reset.sentTitle": "重設連結已寄出",
+      "reset.sentSub": function (email) { return '已將重設密碼連結寄至 ' + email + '，請至信箱查收（此為示範，未實際寄送）。'; },
+      "continue.btn": "前往你的星圖報告 →",
+      "plan.badge.free": "已選擇方案：入門（免費）", "plan.badge.premium": "已選擇方案：深度校準 · NT$199／月"
+    },
+    "zh-CN": {
+      brand: "观命所", "tab.login": "登录", "tab.signup": "注册",
+      "headline.eyebrow.login": "欢迎回到星图校准台", "headline.title.login": "登录账号",
+      "headline.eyebrow.signup": "开始你的第一份星图", "headline.title.signup": "创建账号",
+      "field.name": "昵称", "field.namePh": "怎么称呼你",
+      "field.email": "Email", "field.password": "密码", "field.passwordPh": "至少 8 个字符",
+      "field.confirm": "确认密码", "field.confirmPh": "再输入一次密码",
+      "field.remember": "记住我", "field.forgot": "忘记密码？",
+      "field.terms": "我已阅读并同意<a href=\"#\">服务条款</a>与<a href=\"#\">隐私权政策</a>，了解生辰资料仅用于产出个人命理报告",
+      "submit.login": "登录", "submit.signup": "创建账号",
+      "divider.or": "或", "google.btn": "以 Google 继续",
+      "switch.toSignup": "还没有账号？", "switch.toSignupBtn": "创建一个",
+      "switch.toLogin": "已经有账号了？", "switch.toLoginBtn": "直接登录",
+      "success.title.login": "登录成功", "success.sub.login": "正在为你校准星图，请稍候。",
+      "success.title.signup": "账号创建成功", "success.sub.signup": "欢迎加入观命所，正在为你准备第一份星图。",
+      "legal.note": "观命所仅以你提供的账号资讯建立会员身分，生辰命盘资料另行加密储存，可随时于账户设定内查询或删除。",
+      "err.email": "请输入正确的 Email 格式", "err.password": "密码至少需要 8 个字符",
+      "err.name": "请输入昵称", "err.confirm": "两次输入的密码不一致", "err.terms": "请先阅读并同意服务条款",
+      "reset.eyebrow": "重新取得存取权", "reset.title": "重设密码", "reset.submit": "送出重设连结", "reset.back": "返回登录",
+      "reset.sentTitle": "重设连结已寄出",
+      "reset.sentSub": function (email) { return '已将重设密码连结寄至 ' + email + '，请至信箱查收（此为示范，未实际寄送）。'; },
+      "continue.btn": "前往你的星图报告 →",
+      "plan.badge.free": "已选择方案：入门（免费）", "plan.badge.premium": "已选择方案：深度校准 · NT$199／月"
+    },
+    "en": {
+      brand: "Guanming Institute", "tab.login": "Log in", "tab.signup": "Sign up",
+      "headline.eyebrow.login": "Welcome back to the console", "headline.title.login": "Log in",
+      "headline.eyebrow.signup": "Start your first star chart", "headline.title.signup": "Create account",
+      "field.name": "Nickname", "field.namePh": "What should we call you",
+      "field.email": "Email", "field.password": "Password", "field.passwordPh": "At least 8 characters",
+      "field.confirm": "Confirm password", "field.confirmPh": "Type your password again",
+      "field.remember": "Remember me", "field.forgot": "Forgot password?",
+      "field.terms": "I have read and agree to the <a href=\"#\">Terms of Service</a> and <a href=\"#\">Privacy Policy</a>, and understand my birth data is only used to generate my personal reading",
+      "submit.login": "Log in", "submit.signup": "Create account",
+      "divider.or": "or", "google.btn": "Continue with Google",
+      "switch.toSignup": "Don't have an account?", "switch.toSignupBtn": "Create one",
+      "switch.toLogin": "Already have an account?", "switch.toLoginBtn": "Log in",
+      "success.title.login": "Logged in", "success.sub.login": "Calibrating your star chart — one moment.",
+      "success.title.signup": "Account created", "success.sub.signup": "Welcome to Guanming Institute — preparing your first star chart.",
+      "legal.note": "Guanming Institute uses only the account information you provide to create your membership. Your birth chart data is stored separately and encrypted, and can be queried or deleted from account settings at any time.",
+      "err.email": "Please enter a valid email address", "err.password": "Password must be at least 8 characters",
+      "err.name": "Please enter a nickname", "err.confirm": "Passwords do not match", "err.terms": "Please read and agree to the Terms of Service",
+      "reset.eyebrow": "Regain access", "reset.title": "Reset password", "reset.submit": "Send reset link", "reset.back": "Back to log in",
+      "reset.sentTitle": "Reset link sent",
+      "reset.sentSub": function (email) { return "We sent a password reset link to " + email + " (this is a demo — nothing was actually sent)."; },
+      "continue.btn": "Go to your star chart report →",
+      "plan.badge.free": "Selected plan: Starter (free)", "plan.badge.premium": "Selected plan: Deep Calibration · NT$199/mo"
+    },
+    "ja": {
+      brand: "観命所", "tab.login": "ログイン", "tab.signup": "新規登録",
+      "headline.eyebrow.login": "星図較正コンソールへおかえりなさい", "headline.title.login": "ログイン",
+      "headline.eyebrow.signup": "最初の星図をはじめよう", "headline.title.signup": "アカウント作成",
+      "field.name": "ニックネーム", "field.namePh": "呼び方を入力",
+      "field.email": "メールアドレス", "field.password": "パスワード", "field.passwordPh": "8文字以上",
+      "field.confirm": "パスワード（確認）", "field.confirmPh": "もう一度入力してください",
+      "field.remember": "ログイン状態を保持", "field.forgot": "パスワードをお忘れですか？",
+      "field.terms": "<a href=\"#\">利用規約</a>および<a href=\"#\">プライバシーポリシー</a>を読み、生年月日データは個人の鑑定結果作成にのみ使用されることを理解し、同意します",
+      "submit.login": "ログイン", "submit.signup": "アカウントを作成",
+      "divider.or": "または", "google.btn": "Googleで続ける",
+      "switch.toSignup": "アカウントをお持ちでない方", "switch.toSignupBtn": "新規登録",
+      "switch.toLogin": "すでにアカウントをお持ちの方", "switch.toLoginBtn": "ログイン",
+      "success.title.login": "ログインしました", "success.sub.login": "星図を較正しています。少々お待ちください。",
+      "success.title.signup": "アカウントを作成しました", "success.sub.signup": "観命所へようこそ。最初の星図を準備しています。",
+      "legal.note": "観命所は、入力いただいたアカウント情報のみで会員登録を行います。生年月日の命盤データは別途暗号化して保存され、アカウント設定からいつでも照会・削除できます。",
+      "err.email": "正しいメールアドレスを入力してください", "err.password": "パスワードは8文字以上で入力してください",
+      "err.name": "ニックネームを入力してください", "err.confirm": "パスワードが一致しません", "err.terms": "利用規約への同意が必要です",
+      "reset.eyebrow": "アクセス権の再取得", "reset.title": "パスワードを再設定", "reset.submit": "再設定リンクを送信", "reset.back": "ログインに戻る",
+      "reset.sentTitle": "再設定リンクを送信しました",
+      "reset.sentSub": function (email) { return email + ' 宛にパスワード再設定リンクを送信しました（これはデモのため実際には送信されていません）。'; },
+      "continue.btn": "星図レポートへ進む →",
+      "plan.badge.free": "選択中のプラン：スターター（無料）", "plan.badge.premium": "選択中のプラン：ディープ較正 · NT$199／月"
+    }
+  };
+
+  var currentLang = 'zh-TW';
+  try { var saved = localStorage.getItem('gm-lang'); if (saved && DICT[saved]) currentLang = saved; } catch (e) {}
+  function t(key) { return (DICT[currentLang] && DICT[currentLang][key]) || DICT['zh-TW'][key] || ''; }
+
+  function applyStaticLang() {
+    document.documentElement.lang = currentLang;
+    document.querySelectorAll('[data-i18n]').forEach(function (el) {
+      var key = el.getAttribute('data-i18n');
+      var val = t(key);
+      if (!val) return;
+      if (el.hasAttribute('data-i18n-html')) el.innerHTML = val; else el.textContent = val;
+    });
+    document.querySelectorAll('[data-i18n-placeholder]').forEach(function (el) {
+      el.placeholder = t(el.getAttribute('data-i18n-placeholder'));
+    });
+    document.querySelectorAll('.lang-switch button').forEach(function (b) {
+      b.setAttribute('aria-pressed', String(b.getAttribute('data-lang') === currentLang));
+    });
+  }
+
+  document.querySelectorAll('.lang-switch button').forEach(function (b) {
+    b.addEventListener('click', function () {
+      currentLang = b.getAttribute('data-lang');
+      try { localStorage.setItem('gm-lang', currentLang); } catch (e) {}
+      applyStaticLang();
+      setMode(mode, true);
+    });
+  });
+
+  // starfield
+  var canvas = document.getElementById('starfield');
+  var ctx = canvas.getContext('2d');
+  var dpr = Math.min(window.devicePixelRatio || 1, 2);
+  var stars = [];
+  function size() {
+    var w = window.innerWidth, h = window.innerHeight;
+    canvas.width = w * dpr; canvas.height = h * dpr;
+    canvas.style.width = w + 'px'; canvas.style.height = h + 'px';
+    ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+    var seed = 7;
+    function rand() { seed = (seed * 16807) % 2147483647; return seed / 2147483647; }
+    var count = Math.round((w * h) / 11000);
+    stars = [];
+    for (var i = 0; i < count; i++) stars.push({ x: rand() * w, y: rand() * h, r: 0.5 + rand() * 1.2, phase: rand() * 6.28, speed: 0.4 + rand() * 0.5 });
+  }
+  var t1 = 0;
+  function frame() {
+    var w = canvas.clientWidth, h = canvas.clientHeight;
+    ctx.clearRect(0, 0, w, h);
+    stars.forEach(function (s) {
+      var a = reduceMotion ? (0.3 + 0.3 * Math.sin(s.phase)) : (0.28 + 0.4 * (0.5 + 0.5 * Math.sin(t1 * 0.001 * s.speed + s.phase)));
+      ctx.globalAlpha = a; ctx.fillStyle = 'rgba(236,231,217,0.8)';
+      ctx.beginPath(); ctx.arc(s.x, s.y, s.r, 0, Math.PI * 2); ctx.fill();
+    });
+    ctx.globalAlpha = 1;
+    if (!reduceMotion) { t1 += 16; requestAnimationFrame(frame); }
+  }
+  size(); frame();
+  window.addEventListener('resize', size);
+
+  // password visibility toggles
+  document.querySelectorAll('.toggle-visibility').forEach(function (btn) {
+    btn.addEventListener('click', function () {
+      var target = document.getElementById(btn.getAttribute('data-target'));
+      target.type = target.type === 'password' ? 'text' : 'password';
+    });
+  });
+
+  // tab switching
+  var mode = 'login';
+  var tabLogin = document.getElementById('tab-login');
+  var tabSignup = document.getElementById('tab-signup');
+  var fieldName = document.getElementById('field-name');
+  var fieldConfirm = document.getElementById('field-confirm');
+  var fieldTerms = document.getElementById('field-terms');
+  var loginExtras = document.getElementById('login-extras');
+  var headlineEyebrow = document.getElementById('headline-eyebrow');
+  var headlineTitle = document.getElementById('headline-title');
+  var submitBtn = document.getElementById('submit-btn');
+  var switchLine = document.getElementById('switch-line');
+  var planBadge = document.getElementById('plan-badge');
+
+  function clearErrors() {
+    document.querySelectorAll('.field').forEach(function (f) { f.classList.remove('invalid'); f.querySelector('.msg').textContent = ''; });
+  }
+
+  function renderSwitchLine() {
+    switchLine.innerHTML = '';
+    var span = document.createElement('span');
+    var btn = document.createElement('button');
+    btn.type = 'button';
+    btn.id = 'switch-btn';
+    if (mode === 'signup') {
+      span.textContent = t('switch.toLogin') + ' ';
+      btn.textContent = t('switch.toLoginBtn');
+      btn.addEventListener('click', function () { setMode('login'); });
+    } else {
+      span.textContent = t('switch.toSignup') + ' ';
+      btn.textContent = t('switch.toSignupBtn');
+      btn.addEventListener('click', function () { setMode('signup'); });
+    }
+    switchLine.appendChild(span);
+    switchLine.appendChild(btn);
+  }
+
+  function setMode(next, silent) {
+    mode = next;
+    if (!silent) clearErrors();
+    var isSignup = mode === 'signup';
+    tabLogin.setAttribute('aria-selected', String(!isSignup));
+    tabSignup.setAttribute('aria-selected', String(isSignup));
+    fieldName.hidden = !isSignup;
+    fieldConfirm.hidden = !isSignup;
+    fieldTerms.hidden = !isSignup;
+    loginExtras.style.display = isSignup ? 'none' : 'flex';
+    headlineEyebrow.textContent = t(isSignup ? 'headline.eyebrow.signup' : 'headline.eyebrow.login');
+    headlineTitle.textContent = t(isSignup ? 'headline.title.signup' : 'headline.title.login');
+    submitBtn.textContent = t(isSignup ? 'submit.signup' : 'submit.login');
+    renderSwitchLine();
+
+    planBadge.hidden = !isSignup;
+    if (isSignup) {
+      planBadge.textContent = t(planParam === 'premium' ? 'plan.badge.premium' : 'plan.badge.free');
+      planBadge.classList.toggle('premium', planParam === 'premium');
+    }
+  }
+  tabLogin.addEventListener('click', function () { setMode('login'); });
+  tabSignup.addEventListener('click', function () { setMode('signup'); });
+
+  // validation + fake submit
+  function showError(fieldId, message) {
+    var f = document.getElementById(fieldId);
+    f.classList.add('invalid');
+    f.querySelector('.msg').textContent = message;
+  }
+
+  document.getElementById('auth-form').addEventListener('submit', function (e) {
+    e.preventDefault();
+    clearErrors();
+    var ok = true;
+    var email = document.getElementById('f-email').value.trim();
+    var password = document.getElementById('f-password').value;
+
+    if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) { showError('field-email', t('err.email')); ok = false; }
+    if (password.length < 8) { showError('field-password', t('err.password')); ok = false; }
+
+    if (mode === 'signup') {
+      var name = document.getElementById('f-name').value.trim();
+      var confirm = document.getElementById('f-confirm').value;
+      var terms = document.getElementById('f-terms').checked;
+      if (!name) { showError('field-name', t('err.name')); ok = false; }
+      if (confirm !== password) { showError('field-confirm', t('err.confirm')); ok = false; }
+      if (!terms) { showError('field-terms', t('err.terms')); ok = false; }
+    }
+
+    if (!ok) return;
+
+    document.getElementById('form-view').style.display = 'none';
+    var success = document.getElementById('success-view');
+    success.classList.add('show');
+    document.getElementById('success-title').textContent = t(mode === 'signup' ? 'success.title.signup' : 'success.title.login');
+    document.getElementById('success-sub').textContent = t(mode === 'signup' ? 'success.sub.signup' : 'success.sub.login');
+
+    var reportParams = new URLSearchParams();
+    if (carried.d) reportParams.set('d', carried.d);
+    if (carried.t) reportParams.set('t', carried.t);
+    if (carried.c) reportParams.set('c', carried.c);
+    if (mode === 'signup' && name) reportParams.set('n', name);
+    reportParams.set('tier', planParam);
+    var qs = reportParams.toString();
+    document.getElementById('continue-btn').onclick = function () {
+      window.location.href = REPORT_URL + (qs ? '?' + qs : '');
+    };
+  });
+
+  // ---------- Forgot password flow ----------
+  var formView = document.getElementById('form-view');
+  var resetView = document.getElementById('reset-view');
+  var resetSentView = document.getElementById('reset-sent-view');
+
+  function showForm() { formView.hidden = false; formView.style.display = ''; resetView.hidden = true; resetSentView.hidden = true; }
+  function showReset() { formView.hidden = true; resetView.hidden = false; resetSentView.hidden = true; }
+
+  document.getElementById('forgot-btn').addEventListener('click', showReset);
+  document.getElementById('reset-back-btn').addEventListener('click', showForm);
+  document.getElementById('reset-sent-back-btn').addEventListener('click', showForm);
+
+  document.getElementById('reset-form').addEventListener('submit', function (e) {
+    e.preventDefault();
+    var field = document.getElementById('field-reset-email');
+    field.classList.remove('invalid');
+    field.querySelector('.msg').textContent = '';
+    var email = document.getElementById('f-reset-email').value.trim();
+    if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
+      field.classList.add('invalid');
+      field.querySelector('.msg').textContent = t('err.email');
+      return;
+    }
+    resetView.hidden = true;
+    resetSentView.hidden = false;
+    document.getElementById('reset-sent-sub').textContent = t('reset.sentSub')(email);
+  });
+
+  applyStaticLang();
+  setMode(initialMode);
+})();
+</script>
+
+</body></html>

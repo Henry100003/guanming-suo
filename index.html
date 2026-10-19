@@ -1,0 +1,778 @@
+<!doctype html><html><head><meta charset=utf8><meta name=viewport content="width=device-width,initial-scale=1"><style>:root{color-scheme:light}body{margin:0;padding:0;font:14px -apple-system,BlinkMacSystemFont,sans-serif;background:#faf9f5;color:#141413}img{max-width:100%}[hidden]:not([hidden=until-found]){display:none!important}</style></head><body>
+<title>觀命所</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Noto+Serif+TC:wght@500;600;700&family=Noto+Sans+TC:wght@400;500;600;700&family=Cormorant+Garamond:ital,wght@0,500;0,600;1,500;1,600&display=swap">
+<style>
+  :root {
+    --void: #0a0d18;
+    --void-raised: #141a2c;
+    --void-panel: #10152444;
+    --parchment: #ece5d3;
+    --ink: #ece7da;
+    --ink-soft: #a3a4c4;
+    --ink-faint: #8386ad;
+    --brass: #c99a4c;
+    --brass-bright: #e6c383;
+    --verdigris: #5c9c8c;
+    --line: rgba(236,231,217,0.13);
+    --line-strong: rgba(236,231,217,0.24);
+    --shadow: 0 20px 60px -25px rgba(0,0,0,0.7);
+  }
+
+  * { box-sizing: border-box; }
+  [hidden] { display: none !important; }
+  html { scroll-behavior: smooth; }
+  body {
+    margin: 0;
+    background: var(--void);
+    color: var(--ink);
+    font-family: "Noto Sans TC", "PingFang TC", "Microsoft JhengHei", sans-serif;
+    line-height: 1.7;
+    -webkit-font-smoothing: antialiased;
+    overflow-x: hidden;
+  }
+  h1, h2, h3 { font-family: "Noto Serif TC", "Songti TC", serif; text-wrap: balance; margin: 0; color: var(--ink); }
+  p { margin: 0; }
+  .num, .data, .eyebrow, .tick-label { font-family: "Cormorant Garamond", "Noto Serif TC", serif; font-variant-numeric: tabular-nums; }
+  a { color: inherit; }
+  button { font-family: inherit; cursor: pointer; }
+  :focus-visible { outline: 2px solid var(--brass-bright); outline-offset: 3px; }
+  ::selection { background: var(--brass); color: var(--void); }
+
+  .wrap { max-width: 1180px; margin: 0 auto; padding-left: clamp(1.25rem, 5vw, 3.5rem); padding-right: clamp(1.25rem, 5vw, 3.5rem); }
+
+  /* ---------------- Topbar ---------------- */
+  .topbar {
+    position: sticky; top: 0; z-index: 40;
+    display: flex; align-items: center; justify-content: space-between; gap: 1rem;
+    padding: 1.1rem clamp(1.25rem, 5vw, 3.5rem);
+    background: rgba(10,13,24,0.82);
+    backdrop-filter: blur(10px);
+    border-bottom: 1px solid var(--line);
+  }
+  .brand { display: flex; align-items: center; gap: 0.6rem; text-decoration: none; }
+  .brand svg { width: 26px; height: 26px; }
+  .brand span { font-family: "Noto Serif TC", serif; font-weight: 700; font-size: 1.15rem; letter-spacing: 0.02em; }
+  .topbar-right { display: flex; align-items: center; gap: 1.4rem; }
+  .navlinks { display: none; gap: 2rem; font-size: 0.92rem; color: var(--ink-soft); }
+  .navlinks a { text-decoration: none; }
+  .navlinks a:hover { color: var(--ink); }
+  .btn-cta {
+    background: var(--brass); color: #241a08; border: none; border-radius: 3px;
+    padding: 0.55rem 1.25rem; font-size: 0.88rem; font-weight: 600; letter-spacing: 0.02em;
+  }
+  .btn-cta:hover { background: var(--brass-bright); }
+  .topbar .btn-cta { display: none; }
+  @media (min-width: 760px) { .navlinks { display: flex; } .topbar .btn-cta { display: inline-block; } }
+
+  .lang-switch { display: flex; gap: 2px; background: var(--void-raised); border: 1px solid var(--line-strong); border-radius: 999px; padding: 2px; }
+  .lang-switch button {
+    background: none; border: none; color: var(--ink-faint); font-size: 0.72rem; font-weight: 600;
+    padding: 0.32rem 0.6rem; border-radius: 999px; letter-spacing: 0.03em;
+  }
+  .lang-switch button[aria-pressed="true"] { background: var(--brass); color: #241a08; }
+  .lang-switch button:hover:not([aria-pressed="true"]) { color: var(--ink); }
+
+  /* ---------------- Hero ---------------- */
+  .hero { position: relative; padding: clamp(3.5rem,8vw,6rem) 0 4rem; overflow: hidden; }
+  canvas#starfield { position: absolute; inset: 0; width: 100%; height: 100%; z-index: 0; }
+  .hero::after {
+    content: ""; position: absolute; inset: 0;
+    background: radial-gradient(ellipse 60% 50% at 50% 0%, rgba(92,156,140,0.10), transparent 60%);
+    pointer-events: none;
+  }
+  .hero-inner { position: relative; z-index: 1; }
+  .eyebrow {
+    display: inline-flex; align-items: center; gap: 0.55rem;
+    font-size: 1rem; font-style: italic; font-weight: 600; color: var(--verdigris);
+    letter-spacing: 0.04em; margin-bottom: 1.1rem;
+  }
+  .eyebrow::before { content: ""; width: 26px; height: 1px; background: var(--verdigris); }
+  .hero h1 {
+    font-size: clamp(2rem, 4.6vw, 3.1rem); font-weight: 700; line-height: 1.32;
+    max-width: 18ch;
+  }
+  .hero h1 em { color: var(--brass-bright); font-style: normal; }
+  .hero-sub {
+    display: block; margin-top: 1.3rem; max-width: 56ch; font-size: 1.05rem; color: var(--ink-soft);
+  }
+
+  /* ---------------- Console ---------------- */
+  .console {
+    margin-top: 2.5rem; max-width: 640px;
+    background: linear-gradient(180deg, var(--void-raised), #0d1220);
+    border: 1px solid var(--line-strong);
+    border-radius: 10px;
+    padding: 1.6rem 1.7rem 1.7rem;
+    box-shadow: var(--shadow);
+  }
+  .console-head { display: flex; justify-content: space-between; align-items: baseline; margin-bottom: 1.2rem; gap: 0.5rem; }
+  .console-head .tick-label { font-size: 0.85rem; color: var(--ink-faint); font-style: italic; white-space: nowrap; }
+  .console-title { font-size: 0.78rem; letter-spacing: 0.14em; text-transform: uppercase; color: var(--ink-faint); font-family: "Noto Sans TC", sans-serif; }
+  .fields { display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); gap: 1rem; }
+  .field label {
+    display: block; font-size: 0.78rem; color: var(--ink-faint); margin-bottom: 0.4rem;
+    letter-spacing: 0.03em;
+  }
+  .field input[type="date"], .field input[type="time"], .field input[type="text"] {
+    width: 100%; background: #0a0e1c; border: 1px solid var(--line-strong); border-radius: 5px;
+    padding: 0.6rem 0.7rem; color: var(--ink); font-size: 0.92rem; color-scheme: dark;
+    font-family: "Noto Sans TC", sans-serif;
+  }
+  .field input::placeholder { color: var(--ink-faint); }
+  .field input:focus { border-color: var(--brass); }
+  .gender-toggle { display: flex; gap: 0.4rem; }
+  .gender-toggle button {
+    flex: 1; background: #0a0e1c; border: 1px solid var(--line-strong); color: var(--ink-soft);
+    border-radius: 5px; padding: 0.6rem 0.4rem; font-size: 0.85rem;
+  }
+  .gender-toggle button[aria-pressed="true"] { border-color: var(--brass); color: var(--brass-bright); background: #16110a; }
+  .console-foot { display: flex; align-items: center; justify-content: space-between; gap: 1rem; margin-top: 1.4rem; flex-wrap: wrap; }
+  .hint { font-size: 0.78rem; color: var(--ink-faint); }
+  .btn-calibrate {
+    background: var(--brass); color: #241a08; border: none; border-radius: 5px;
+    padding: 0.75rem 1.5rem; font-size: 0.95rem; font-weight: 700; letter-spacing: 0.02em;
+    display: inline-flex; align-items: center; gap: 0.5rem; white-space: nowrap;
+  }
+  .btn-calibrate:hover { background: var(--brass-bright); }
+  .btn-calibrate svg { width: 16px; height: 16px; }
+
+  /* ---------------- Reading panel ---------------- */
+  .reading-panel {
+    margin-top: 1.4rem; max-width: 640px;
+    border: 1px solid var(--line-strong); border-radius: 10px;
+    background: var(--void-raised);
+    padding: 1.5rem 1.7rem; box-shadow: var(--shadow);
+  }
+  .reading-panel[hidden] { display: none; }
+  .reading-tag {
+    font-size: 0.72rem; letter-spacing: 0.12em; text-transform: uppercase; color: var(--brass);
+    display: block; margin-bottom: 0.7rem;
+  }
+  .reading-stats { display: flex; flex-wrap: wrap; gap: 0.5rem 1.6rem; margin-bottom: 1rem; }
+  .reading-stats div { display: flex; flex-direction: column; }
+  .reading-stats .data { font-size: 1.15rem; color: var(--brass-bright); font-weight: 600; }
+  .reading-stats .lbl { font-size: 0.72rem; color: var(--ink-faint); }
+  .reading-text { font-size: 0.96rem; color: var(--ink); max-width: 60ch; }
+  .reading-note { margin-top: 0.9rem; font-size: 0.78rem; color: var(--ink-faint); border-top: 1px dashed var(--line); padding-top: 0.7rem; }
+
+  /* ---------------- Sections generic ---------------- */
+  section { padding: clamp(3rem,6vw,5rem) 0; border-top: 1px solid var(--line); }
+  .section-head { max-width: 62ch; margin-bottom: 2.4rem; }
+  .section-head .eyebrow { color: var(--brass); }
+  .section-head .eyebrow::before { background: var(--brass); }
+  .section-head h2 { font-size: clamp(1.5rem, 3vw, 2rem); font-weight: 700; }
+  .section-head p { margin-top: 0.8rem; color: var(--ink-soft); font-size: 1rem; max-width: 56ch; }
+
+  .reveal { opacity: 1; transform: none; }
+  .reveal.pending { opacity: 0; transform: translateY(18px); transition: opacity 0.7s ease, transform 0.7s ease; }
+  .reveal.pending.in-view { opacity: 1; transform: none; }
+
+  /* ---------------- Services ---------------- */
+  .service-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(230px, 1fr)); gap: 1.1rem; }
+  .service-card {
+    background: var(--void-raised); border: 1px solid var(--line); border-radius: 10px;
+    padding: 1.5rem 1.4rem; transition: border-color 0.25s ease, transform 0.25s ease;
+  }
+  .service-card:hover { border-color: var(--line-strong); transform: translateY(-3px); }
+  .service-card svg { width: 30px; height: 30px; color: var(--verdigris); margin-bottom: 0.9rem; }
+  .service-card h3 { font-size: 1.05rem; font-weight: 600; margin-bottom: 0.5rem; }
+  .service-card p { font-size: 0.88rem; color: var(--ink-soft); }
+
+  /* ---------------- Process ---------------- */
+  .process-list { display: grid; grid-template-columns: repeat(auto-fit, minmax(220px,1fr)); gap: 2rem; counter-reset: step; }
+  .process-item { position: relative; padding-left: 0; }
+  .process-item .num { font-size: 2.1rem; color: var(--brass); display: block; margin-bottom: 0.5rem; font-weight: 600; }
+  .process-item h3 { font-size: 1rem; font-weight: 600; margin-bottom: 0.45rem; }
+  .process-item p { font-size: 0.88rem; color: var(--ink-soft); max-width: 32ch; }
+
+  /* ---------------- Pricing ---------------- */
+  .pricing-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(260px,1fr)); gap: 1.2rem; }
+  .price-card {
+    border: 1px solid var(--line); border-radius: 10px; padding: 1.8rem 1.6rem;
+    background: var(--void-raised); display: flex; flex-direction: column; gap: 1.1rem;
+  }
+  .price-card.featured { border-color: var(--brass); background: linear-gradient(180deg, #16130a, var(--void-raised)); }
+  .price-card .plan-name { font-size: 0.85rem; color: var(--ink-faint); letter-spacing: 0.06em; }
+  .price-card .price { font-family: "Cormorant Garamond", serif; font-size: 2.4rem; color: var(--ink); font-weight: 600; }
+  .price-card .price span { font-size: 0.95rem; color: var(--ink-faint); font-family: "Noto Sans TC", sans-serif; }
+  .price-card ul { list-style: none; margin: 0; padding: 0; display: flex; flex-direction: column; gap: 0.55rem; font-size: 0.88rem; color: var(--ink-soft); }
+  .price-card li::before { content: "—"; color: var(--verdigris); margin-right: 0.5rem; }
+  .price-card .btn-cta { align-self: flex-start; }
+  .price-card.featured .btn-cta { background: var(--brass); }
+
+  /* ---------------- Trust strip ---------------- */
+  .trust { border-top: 1px solid var(--line); padding: 2.4rem 0; }
+  .trust-inner { display: flex; align-items: center; gap: 1rem; max-width: 74ch; }
+  .trust svg { width: 28px; height: 28px; flex: none; color: var(--verdigris); }
+  .trust p { font-size: 0.92rem; color: var(--ink-soft); }
+  .trust b { color: var(--ink); font-weight: 600; }
+
+  footer { border-top: 1px solid var(--line); padding: 2.5rem 0 3rem; }
+  .footer-legal { font-size: 0.8rem; color: var(--ink-faint); max-width: 68ch; line-height: 1.8; }
+  .footer-bottom { margin-top: 1.6rem; display: flex; justify-content: space-between; flex-wrap: wrap; gap: 0.8rem; font-size: 0.78rem; color: var(--ink-faint); }
+
+  @media (prefers-reduced-motion: reduce) {
+    .reveal.pending { opacity: 1; transform: none; transition: none; }
+  }
+</style>
+
+<nav class="topbar">
+  <a class="brand" href="#top">
+    <svg viewBox="0 0 32 32" fill="none" aria-hidden="true">
+      <circle cx="16" cy="16" r="10.5" stroke="currentColor" stroke-width="1.1" style="color:var(--brass)"/>
+      <ellipse cx="16" cy="16" rx="10.5" ry="4" stroke="currentColor" stroke-width="1.1" style="color:var(--verdigris)"/>
+      <circle cx="16" cy="16" r="1.6" fill="var(--brass-bright)"/>
+    </svg>
+    <span data-i18n="brand">觀命所</span>
+  </a>
+  <div class="topbar-right">
+    <div class="navlinks">
+      <a href="#services" data-i18n="nav.services">服務</a>
+      <a href="#process" data-i18n="nav.process">運作方式</a>
+      <a href="#pricing" data-i18n="nav.pricing">方案</a>
+    </div>
+    <div class="lang-switch" role="group" aria-label="Language">
+      <button data-lang="zh-TW" aria-pressed="true">繁</button>
+      <button data-lang="zh-CN" aria-pressed="false">简</button>
+      <button data-lang="en" aria-pressed="false">EN</button>
+      <button data-lang="ja" aria-pressed="false">日</button>
+    </div>
+    <button class="btn-cta" id="nav-cta-btn" data-i18n="nav.cta">免費體驗</button>
+  </div>
+</nav>
+
+<header class="hero" id="top">
+  <canvas id="starfield" aria-hidden="true"></canvas>
+  <div class="wrap hero-inner">
+    <p class="eyebrow" data-i18n="hero.eyebrow">AI 命理 · 精密到分鐘的星圖校準</p>
+    <h1 data-i18n="hero.title" data-i18n-html="1">你的出生時刻，<br>是一份還沒被讀懂的<em>座標</em>。</h1>
+    <p class="hero-sub" data-i18n="hero.sub">觀命所把紫微斗數、生辰八字與西洋占星的判讀邏輯交給 AI 逐條核對，用可以重複驗證的方式，把「感覺準」變成「講得出為什麼準」。</p>
+
+    <div class="console">
+      <div class="console-head">
+        <span class="console-title" data-i18n="console.title">星圖校準台</span>
+        <span class="tick-label" data-i18n="console.tz">基準時區 GMT+8</span>
+      </div>
+      <div class="fields">
+        <div class="field">
+          <label for="f-date" data-i18n="console.dateLabel">出生日期</label>
+          <input type="date" id="f-date">
+        </div>
+        <div class="field">
+          <label for="f-time" data-i18n="console.timeLabel">出生時間（不確定可留白）</label>
+          <input type="time" id="f-time">
+        </div>
+        <div class="field">
+          <label for="f-city" data-i18n="console.cityLabel">出生地</label>
+          <input type="text" id="f-city" data-i18n-placeholder="console.cityPlaceholder" placeholder="例如：台北">
+        </div>
+        <div class="field">
+          <label id="gender-label" data-i18n="console.genderLabel">性別</label>
+          <div class="gender-toggle" role="group" aria-labelledby="gender-label">
+            <button type="button" data-gender="f" aria-pressed="false" data-i18n="gender.f">女</button>
+            <button type="button" data-gender="m" aria-pressed="false" data-i18n="gender.m">男</button>
+            <button type="button" data-gender="n" aria-pressed="true" data-i18n="gender.n">不透露</button>
+          </div>
+        </div>
+      </div>
+      <div class="console-foot">
+        <span class="hint" id="form-hint" data-i18n="console.hint">輸入日期即可校準，時間與地點能提升精度</span>
+        <button class="btn-calibrate" id="calibrate-btn">
+          <span data-i18n="console.btn">校準星圖</span>
+          <svg viewBox="0 0 16 16" fill="none" aria-hidden="true"><path d="M3 8h10M9 4l4 4-4 4" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></svg>
+        </button>
+      </div>
+    </div>
+
+    <div class="reading-panel" id="reading" hidden>
+      <span class="reading-tag" data-i18n="reading.tag">示範讀數 · Demo Reading</span>
+      <div class="reading-stats">
+        <div><span class="data" id="r-sun">—</span><span class="lbl" data-i18n="reading.sun">太陽星座</span></div>
+        <div><span class="data" id="r-zodiac">—</span><span class="lbl" data-i18n="reading.zodiac">生肖</span></div>
+        <div><span class="data" id="r-element">—</span><span class="lbl" data-i18n="reading.element">五行傾向</span></div>
+      </div>
+      <p class="reading-text" id="r-text"></p>
+      <p class="reading-note" data-i18n="reading.note">此為互動示範文字，用固定樣板依生辰組合而成；正式版報告將由 AI 於登入後即時生成，並可依完整命盤資料持續校正與追問。</p>
+      <button type="button" class="btn-cta" id="reading-cta-btn" style="margin-top:1.1rem" data-i18n="reading.cta">登入解鎖完整報告 →</button>
+    </div>
+  </div>
+</header>
+
+<section id="services">
+  <div class="wrap">
+    <div class="section-head reveal pending">
+      <p class="eyebrow" data-i18n="services.eyebrow">四件校準儀器</p>
+      <h2 data-i18n="services.title">同一份生辰，四種讀法</h2>
+      <p data-i18n="services.sub">每一項服務都對應一套獨立的判讀邏輯，AI 只負責交叉比對與整理，不取代你自己的判斷。</p>
+    </div>
+    <div class="service-grid">
+      <div class="service-card reveal pending">
+        <svg viewBox="0 0 32 32" fill="none" aria-hidden="true"><circle cx="16" cy="16" r="11" stroke="currentColor" stroke-width="1.3"/><path d="M16 5v22M5 16h22" stroke="currentColor" stroke-width="1" opacity="0.5"/></svg>
+        <h3 data-i18n="service1.title">紫微斗數命盤</h3>
+        <p data-i18n="service1.desc">以出生年月日時排出十二宮命盤，解讀性格、財運與人生階段的起伏節奏。</p>
+      </div>
+      <div class="service-card reveal pending">
+        <svg viewBox="0 0 32 32" fill="none" aria-hidden="true"><path d="M16 4l3.2 8.6L28 16l-8.8 3.4L16 28l-3.2-8.6L4 16l8.8-3.4L16 4z" stroke="currentColor" stroke-width="1.3" stroke-linejoin="round"/></svg>
+        <h3 data-i18n="service2.title">西洋占星每日運勢</h3>
+        <p data-i18n="service2.desc">依太陽、月亮與上升星座組合，每日推送一段可對照當下處境的短評。</p>
+      </div>
+      <div class="service-card reveal pending">
+        <svg viewBox="0 0 32 32" fill="none" aria-hidden="true"><rect x="9" y="4" width="14" height="20" rx="1.5" stroke="currentColor" stroke-width="1.3"/><path d="M13 10h6M13 14h6M13 18h3" stroke="currentColor" stroke-width="1.1"/></svg>
+        <h3 data-i18n="service3.title">塔羅牌陣</h3>
+        <p data-i18n="service3.desc">針對感情、事業或抉擇提出具體提問，AI 依牌陣位置逐張串成一段脈絡。</p>
+      </div>
+      <div class="service-card reveal pending">
+        <svg viewBox="0 0 32 32" fill="none" aria-hidden="true"><path d="M6 24c2-8 6-14 10-14s8 6 10 14" stroke="currentColor" stroke-width="1.3" stroke-linecap="round"/><circle cx="16" cy="9" r="2.4" stroke="currentColor" stroke-width="1.3"/></svg>
+        <h3 data-i18n="service4.title">AI 姓名學</h3>
+        <p data-i18n="service4.desc">拆解姓名筆畫與五格數理，對照生辰命盤，給出命名或改名的方向建議。</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section id="process">
+  <div class="wrap">
+    <div class="section-head reveal pending">
+      <p class="eyebrow" data-i18n="process.eyebrow">運作方式</p>
+      <h2 data-i18n="process.title">三步，從座標到報告</h2>
+    </div>
+    <div class="process-list">
+      <div class="process-item reveal pending">
+        <span class="num">01</span>
+        <h3 data-i18n="process1.title">輸入座標</h3>
+        <p data-i18n="process1.desc">提供出生日期、時間與地點，資料在傳送前先於瀏覽器端做基本驗證。</p>
+      </div>
+      <div class="process-item reveal pending">
+        <span class="num">02</span>
+        <h3 data-i18n="process2.title">AI 交叉比對</h3>
+        <p data-i18n="process2.desc">系統同時套用紫微斗數、八字與占星的判讀規則，找出彼此都指向的共同訊號。</p>
+      </div>
+      <div class="process-item reveal pending">
+        <span class="num">03</span>
+        <h3 data-i18n="process3.title">產出可追問報告</h3>
+        <p data-i18n="process3.desc">報告附上判讀依據，你可以針對任一段落繼續追問，而不只是收到一段結論。</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section id="pricing">
+  <div class="wrap">
+    <div class="section-head reveal pending">
+      <p class="eyebrow" data-i18n="pricing.eyebrow">方案</p>
+      <h2 data-i18n="pricing.title">先看懂，再決定要不要更深入</h2>
+    </div>
+    <div class="pricing-grid">
+      <div class="price-card reveal pending">
+        <span class="plan-name" data-i18n="plan1.name">入門</span>
+        <span class="price">NT$0</span>
+        <ul>
+          <li data-i18n="plan1.f1">星圖校準台示範讀數</li>
+          <li data-i18n="plan1.f2">每日運勢一則</li>
+          <li data-i18n="plan1.f3">紫微命盤基本宮位</li>
+        </ul>
+        <button class="btn-cta" id="plan1-btn" style="background:transparent;border:1px solid var(--line-strong);color:var(--ink)" data-i18n="plan1.btn">免費開始</button>
+      </div>
+      <div class="price-card featured reveal pending">
+        <span class="plan-name" data-i18n="plan2.name">深度校準</span>
+        <span class="price">NT$199<span data-i18n="plan2.per">／月</span></span>
+        <ul>
+          <li data-i18n="plan2.f1">完整十二宮命盤解讀</li>
+          <li data-i18n="plan2.f2">塔羅牌陣不限次數提問</li>
+          <li data-i18n="plan2.f3">AI 姓名學命名建議</li>
+          <li data-i18n="plan2.f4">報告可持續追問與收藏</li>
+        </ul>
+        <button class="btn-cta" id="plan2-btn" data-i18n="plan2.btn">升級方案</button>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="trust">
+  <div class="wrap trust-inner">
+    <svg viewBox="0 0 32 32" fill="none" aria-hidden="true"><path d="M16 4l10 4v8c0 7-4.5 11.5-10 13-5.5-1.5-10-6-10-13V8l10-4z" stroke="currentColor" stroke-width="1.3" stroke-linejoin="round"/></svg>
+    <p><b data-i18n="trust.title">你的生辰資料只用來產出你的報告。</b><span data-i18n="trust.sub">所有輸入內容於傳輸過程加密，命盤紀錄可隨時於帳戶內查詢、匯出或刪除。</span></p>
+  </div>
+</section>
+
+<footer>
+  <div class="wrap">
+    <p class="footer-legal" data-i18n="footer.legal">觀命所提供的命盤、運勢與牌陣解讀，內容僅供娛樂與自我探索參考，不能取代醫療、心理、法律或財務等專業建議。若你正面臨重大人生決定，請諮詢對應領域的專業人士，或於情緒困擾時尋求在地的求助資源。</p>
+    <div class="footer-bottom">
+      <span data-i18n="footer.copy">© 觀命所</span>
+      <span data-i18n="footer.proto">本頁為產品原型示範，非正式上線服務</span>
+    </div>
+  </div>
+</footer>
+
+<script>
+(function () {
+  var reduceMotion = window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+  /* ================= i18n ================= */
+  var DICT = {
+    "zh-TW": {
+      brand: "觀命所", "nav.services": "服務", "nav.process": "運作方式", "nav.pricing": "方案", "nav.cta": "免費體驗",
+      "hero.eyebrow": "AI 命理 · 精密到分鐘的星圖校準",
+      "hero.title": "你的出生時刻，<br>是一份還沒被讀懂的<em>座標</em>。",
+      "hero.sub": "觀命所把紫微斗數、生辰八字與西洋占星的判讀邏輯交給 AI 逐條核對，用可以重複驗證的方式，把「感覺準」變成「講得出為什麼準」。",
+      "console.title": "星圖校準台", "console.tz": "基準時區 GMT+8",
+      "console.dateLabel": "出生日期", "console.timeLabel": "出生時間（不確定可留白）",
+      "console.cityLabel": "出生地", "console.cityPlaceholder": "例如：台北", "console.genderLabel": "性別",
+      "gender.f": "女", "gender.m": "男", "gender.n": "不透露",
+      "console.hint": "輸入日期即可校準，時間與地點能提升精度",
+      "console.hintError": "請先選擇出生日期，才能校準星圖",
+      "console.btn": "校準星圖",
+      "reading.tag": "示範讀數 · Demo Reading", "reading.sun": "太陽星座", "reading.zodiac": "生肖", "reading.element": "五行傾向",
+      "reading.note": "此為互動示範文字，用固定樣板依生辰組合而成；正式版報告將由 AI 於登入後即時生成，並可依完整命盤資料持續校正與追問。",
+      "reading.cta": "登入解鎖完整報告 →",
+      "services.eyebrow": "四件校準儀器", "services.title": "同一份生辰，四種讀法",
+      "services.sub": "每一項服務都對應一套獨立的判讀邏輯，AI 只負責交叉比對與整理，不取代你自己的判斷。",
+      "service1.title": "紫微斗數命盤", "service1.desc": "以出生年月日時排出十二宮命盤，解讀性格、財運與人生階段的起伏節奏。",
+      "service2.title": "西洋占星每日運勢", "service2.desc": "依太陽、月亮與上升星座組合，每日推送一段可對照當下處境的短評。",
+      "service3.title": "塔羅牌陣", "service3.desc": "針對感情、事業或抉擇提出具體提問，AI 依牌陣位置逐張串成一段脈絡。",
+      "service4.title": "AI 姓名學", "service4.desc": "拆解姓名筆畫與五格數理，對照生辰命盤，給出命名或改名的方向建議。",
+      "process.eyebrow": "運作方式", "process.title": "三步，從座標到報告",
+      "process1.title": "輸入座標", "process1.desc": "提供出生日期、時間與地點，資料在傳送前先於瀏覽器端做基本驗證。",
+      "process2.title": "AI 交叉比對", "process2.desc": "系統同時套用紫微斗數、八字與占星的判讀規則，找出彼此都指向的共同訊號。",
+      "process3.title": "產出可追問報告", "process3.desc": "報告附上判讀依據，你可以針對任一段落繼續追問，而不只是收到一段結論。",
+      "pricing.eyebrow": "方案", "pricing.title": "先看懂，再決定要不要更深入",
+      "plan1.name": "入門", "plan1.f1": "星圖校準台示範讀數", "plan1.f2": "每日運勢一則", "plan1.f3": "紫微命盤基本宮位", "plan1.btn": "免費開始",
+      "plan2.name": "深度校準", "plan2.per": "／月", "plan2.f1": "完整十二宮命盤解讀", "plan2.f2": "塔羅牌陣不限次數提問",
+      "plan2.f3": "AI 姓名學命名建議", "plan2.f4": "報告可持續追問與收藏", "plan2.btn": "升級方案",
+      "trust.title": "你的生辰資料只用來產出你的報告。", "trust.sub": "所有輸入內容於傳輸過程加密，命盤紀錄可隨時於帳戶內查詢、匯出或刪除。",
+      "footer.legal": "觀命所提供的命盤、運勢與牌陣解讀，內容僅供娛樂與自我探索參考，不能取代醫療、心理、法律或財務等專業建議。若你正面臨重大人生決定，請諮詢對應領域的專業人士，或於情緒困擾時尋求在地的求助資源。",
+      "footer.copy": "© 觀命所", "footer.proto": "本頁為產品原型示範，非正式上線服務"
+    },
+    "zh-CN": {
+      brand: "观命所", "nav.services": "服务", "nav.process": "运作方式", "nav.pricing": "方案", "nav.cta": "免费体验",
+      "hero.eyebrow": "AI 命理 · 精确到分钟的星图校准",
+      "hero.title": "你的出生时刻，<br>是一份还没被读懂的<em>坐标</em>。",
+      "hero.sub": "观命所把紫微斗数、生辰八字与西方占星的判读逻辑交给 AI 逐条核对，用可以重复验证的方式，把「感觉准」变成「说得出为什么准」。",
+      "console.title": "星图校准台", "console.tz": "基准时区 GMT+8",
+      "console.dateLabel": "出生日期", "console.timeLabel": "出生时间（不确定可留白）",
+      "console.cityLabel": "出生地", "console.cityPlaceholder": "例如：北京", "console.genderLabel": "性别",
+      "gender.f": "女", "gender.m": "男", "gender.n": "不透露",
+      "console.hint": "输入日期即可校准，时间与地点能提升精度",
+      "console.hintError": "请先选择出生日期，才能校准星图",
+      "console.btn": "校准星图",
+      "reading.tag": "示范读数 · Demo Reading", "reading.sun": "太阳星座", "reading.zodiac": "生肖", "reading.element": "五行倾向",
+      "reading.note": "此为互动示范文字，用固定模板依生辰组合而成；正式版报告将由 AI 于登录后即时生成，并可依完整命盘资料持续校正与追问。",
+      "reading.cta": "登录解锁完整报告 →",
+      "services.eyebrow": "四件校准仪器", "services.title": "同一份生辰，四种读法",
+      "services.sub": "每一项服务都对应一套独立的判读逻辑，AI 只负责交叉比对与整理，不取代你自己的判断。",
+      "service1.title": "紫微斗数命盘", "service1.desc": "以出生年月日时排出十二宫命盘，解读性格、财运与人生阶段的起伏节奏。",
+      "service2.title": "西方占星每日运势", "service2.desc": "依太阳、月亮与上升星座组合，每日推送一段可对照当下处境的短评。",
+      "service3.title": "塔罗牌阵", "service3.desc": "针对感情、事业或抉择提出具体提问，AI 依牌阵位置逐张串成一段脉络。",
+      "service4.title": "AI 姓名学", "service4.desc": "拆解姓名笔画与五格数理，对照生辰命盘，给出命名或改名的方向建议。",
+      "process.eyebrow": "运作方式", "process.title": "三步，从坐标到报告",
+      "process1.title": "输入坐标", "process1.desc": "提供出生日期、时间与地点，资料在传送前先于浏览器端做基本验证。",
+      "process2.title": "AI 交叉比对", "process2.desc": "系统同时套用紫微斗数、八字与占星的判读规则，找出彼此都指向的共同信号。",
+      "process3.title": "产出可追问报告", "process3.desc": "报告附上判读依据，你可以针对任一段落继续追问，而不只是收到一段结论。",
+      "pricing.eyebrow": "方案", "pricing.title": "先看懂，再决定要不要更深入",
+      "plan1.name": "入门", "plan1.f1": "星图校准台示范读数", "plan1.f2": "每日运势一则", "plan1.f3": "紫微命盘基本宫位", "plan1.btn": "免费开始",
+      "plan2.name": "深度校准", "plan2.per": "／月", "plan2.f1": "完整十二宫命盘解读", "plan2.f2": "塔罗牌阵不限次数提问",
+      "plan2.f3": "AI 姓名学命名建议", "plan2.f4": "报告可持续追问与收藏", "plan2.btn": "升级方案",
+      "trust.title": "你的生辰资料只用来产出你的报告。", "trust.sub": "所有输入内容于传输过程加密，命盘记录可随时于账户内查询、导出或删除。",
+      "footer.legal": "观命所提供的命盘、运势与牌阵解读，内容仅供娱乐与自我探索参考，不能取代医疗、心理、法律或财务等专业建议。若你正面临重大人生决定，请咨询对应领域的专业人士，或于情绪困扰时寻求在地的求助资源。",
+      "footer.copy": "© 观命所", "footer.proto": "本页为产品原型示范，非正式上线服务"
+    },
+    "en": {
+      brand: "Guanming Institute", "nav.services": "Services", "nav.process": "How it works", "nav.pricing": "Pricing", "nav.cta": "Start free",
+      "hero.eyebrow": "AI Astrology · Calibrated to the minute",
+      "hero.title": "Your birth moment<br>is a <em>coordinate</em> no one has read yet.",
+      "hero.sub": "Guanming Institute hands the logic of Zi Wei astrology, Chinese four pillars, and Western astrology to AI for line-by-line cross-checking — turning “it feels right” into “here’s why it’s right.”",
+      "console.title": "Calibration Console", "console.tz": "Baseline zone GMT+8",
+      "console.dateLabel": "Birth date", "console.timeLabel": "Birth time (leave blank if unsure)",
+      "console.cityLabel": "Birthplace", "console.cityPlaceholder": "e.g. Taipei", "console.genderLabel": "Gender",
+      "gender.f": "Female", "gender.m": "Male", "gender.n": "Prefer not to say",
+      "console.hint": "Enter a date to calibrate — time and place sharpen the precision",
+      "console.hintError": "Please choose a birth date before calibrating",
+      "console.btn": "Calibrate",
+      "reading.tag": "Demo Reading", "reading.sun": "Sun sign", "reading.zodiac": "Zodiac animal", "reading.element": "Element leaning",
+      "reading.note": "This is an interactive demo composed from fixed templates based on your birth data. The full version generates your report live with AI after sign-in, and lets you keep asking follow-up questions.",
+      "reading.cta": "Log in to unlock the full report →",
+      "services.eyebrow": "Four calibration instruments", "services.title": "One birth chart, four readings",
+      "services.sub": "Each service runs its own independent reading logic — AI only cross-checks and organizes, it never replaces your own judgment.",
+      "service1.title": "Zi Wei Chart", "service1.desc": "Chart your twelve palaces from birth date and time to read personality, wealth, and the rhythm of life’s phases.",
+      "service2.title": "Western Astrology Daily", "service2.desc": "Combining sun, moon, and rising signs to deliver a short daily note you can measure against your own situation.",
+      "service3.title": "Tarot Spread", "service3.desc": "Ask a specific question about love, career, or a decision — AI weaves each position into one coherent thread.",
+      "service4.title": "AI Name Analysis", "service4.desc": "Break a name down by stroke count and the five grids, cross-check it with your chart, and get direction for naming.",
+      "process.eyebrow": "How it works", "process.title": "Three steps, from coordinate to report",
+      "process1.title": "Enter coordinates", "process1.desc": "Provide your birth date, time, and place — validated in your browser before anything is sent.",
+      "process2.title": "AI cross-checks", "process2.desc": "The system applies Zi Wei, Four Pillars, and astrology rules at once, looking for the signal all three agree on.",
+      "process3.title": "A report you can question", "process3.desc": "Every report comes with its reasoning attached — question any paragraph instead of just receiving a conclusion.",
+      "pricing.eyebrow": "Pricing", "pricing.title": "Understand first, go deeper if it's worth it",
+      "plan1.name": "Starter", "plan1.f1": "Calibration console demo reading", "plan1.f2": "One daily reading", "plan1.f3": "Basic Zi Wei palace view", "plan1.btn": "Start free",
+      "plan2.name": "Deep Calibration", "plan2.per": "/mo", "plan2.f1": "Full twelve-palace reading", "plan2.f2": "Unlimited tarot spread questions",
+      "plan2.f3": "AI name analysis suggestions", "plan2.f4": "Keep questioning and save reports", "plan2.btn": "Upgrade",
+      "trust.title": "Your birth data is only ever used to produce your report.", "trust.sub": "Everything you enter is encrypted in transit, and your chart records can be queried, exported, or deleted from your account at any time.",
+      "footer.legal": "Guanming Institute’s charts, forecasts, and tarot readings are for entertainment and self-reflection only, and are not a substitute for professional medical, psychological, legal, or financial advice. If you’re facing a major life decision, please consult the relevant professional, and reach out to local support resources if you’re in distress.",
+      "footer.copy": "© Guanming Institute", "footer.proto": "This page is a product prototype demo, not a live service"
+    },
+    "ja": {
+      brand: "観命所", "nav.services": "サービス", "nav.process": "仕組み", "nav.pricing": "プラン", "nav.cta": "無料で体験",
+      "hero.eyebrow": "AI占星 · 分単位で校正する星図",
+      "hero.title": "あなたが生まれた瞬間は、<br>まだ読み解かれていない<em>座標</em>だ。",
+      "hero.sub": "観命所は紫微斗数・四柱推命・西洋占星術の読み方をAIに逐一照合させ、「なんとなく当たる」を「なぜ当たるのか説明できる」に変えます。",
+      "console.title": "星図較正コンソール", "console.tz": "基準タイムゾーン GMT+8",
+      "console.dateLabel": "生年月日", "console.timeLabel": "生まれた時刻（不明なら空欄でも可）",
+      "console.cityLabel": "出生地", "console.cityPlaceholder": "例：台北", "console.genderLabel": "性別",
+      "gender.f": "女性", "gender.m": "男性", "gender.n": "回答しない",
+      "console.hint": "日付を入力すれば校正できます。時刻と場所を加えると精度が上がります",
+      "console.hintError": "生年月日を選択してから校正してください",
+      "console.btn": "星図を校正",
+      "reading.tag": "デモ結果", "reading.sun": "太陽星座", "reading.zodiac": "干支", "reading.element": "五行傾向",
+      "reading.note": "これはインタラクティブなデモです。生年月日の組み合わせから定型文で生成しています。正式版はログイン後にAIがリアルタイムでレポートを生成し、続けて質問することもできます。",
+      "reading.cta": "ログインして完全版レポートを見る →",
+      "services.eyebrow": "四つの較正装置", "services.title": "同じ生年月日を、四つの視点で",
+      "services.sub": "それぞれのサービスは独立した判読ロジックを持ち、AIは照合と整理を担うだけで、あなた自身の判断に取って代わることはありません。",
+      "service1.title": "紫微斗数チャート", "service1.desc": "生年月日時から十二宮の命盤を作成し、性格・財運・人生の波を読み解きます。",
+      "service2.title": "西洋占星デイリー", "service2.desc": "太陽・月・上昇星座の組み合わせから、今の状況と照らし合わせられる一言を毎日届けます。",
+      "service3.title": "タロットスプレッド", "service3.desc": "恋愛・仕事・決断について具体的に問いかけると、AIがスプレッドの位置ごとに一つの文脈へつなげます。",
+      "service4.title": "AI姓名学", "service4.desc": "姓名の画数と五格数理を分解し、命盤と照合して命名・改名の方向性を提案します。",
+      "process.eyebrow": "仕組み", "process.title": "三つのステップで、座標からレポートへ",
+      "process1.title": "座標を入力", "process1.desc": "生年月日・時刻・場所を入力。送信前にブラウザ側で基本的な検証を行います。",
+      "process2.title": "AIによる照合", "process2.desc": "紫微斗数・四柱推命・占星術のルールを同時に適用し、三つが共通して示すシグナルを探します。",
+      "process3.title": "追加質問できるレポート", "process3.desc": "レポートには判読の根拠が添えられ、結論を受け取るだけでなく、どの段落についても質問を続けられます。",
+      "pricing.eyebrow": "プラン", "pricing.title": "まず理解して、深掘りするかはそれから",
+      "plan1.name": "スターター", "plan1.f1": "較正コンソールのデモ結果", "plan1.f2": "デイリー運勢ひとつ", "plan1.f3": "紫微命盤の基本宮位", "plan1.btn": "無料で始める",
+      "plan2.name": "ディープ較正", "plan2.per": "／月", "plan2.f1": "十二宮すべての命盤解読", "plan2.f2": "タロットスプレッド質問無制限",
+      "plan2.f3": "AI姓名学による命名提案", "plan2.f4": "レポートは追加質問・保存が可能", "plan2.btn": "アップグレード",
+      "trust.title": "生年月日データはあなたのレポート作成にのみ使用されます。", "trust.sub": "入力内容はすべて送信時に暗号化され、命盤の記録はアカウント内でいつでも照会・エクスポート・削除できます。",
+      "footer.legal": "観命所が提供する命盤、運勢、タロット解読は娯楽および自己探求のための参考情報であり、医療・心理・法律・財務などの専門的な助言に代わるものではありません。人生の重要な決断に直面している場合は、該当分野の専門家にご相談ください。心理的な悩みがある場合は、お住まいの地域の相談窓口をご利用ください。",
+      "footer.copy": "© 観命所", "footer.proto": "本ページは製品プロトタイプのデモであり、正式サービスではありません"
+    }
+  };
+
+  var LANG_DATA = {
+    "zh-TW": {
+      SUN_SIGNS: [[1,20,'摩羯座'],[2,19,'水瓶座'],[3,20,'雙魚座'],[4,20,'牡羊座'],[5,21,'金牛座'],[6,21,'雙子座'],[7,22,'巨蟹座'],[8,23,'獅子座'],[9,23,'處女座'],[10,23,'天秤座'],[11,22,'天蠍座'],[12,22,'射手座'],[12,31,'摩羯座']],
+      ZODIAC: ['鼠','牛','虎','兔','龍','蛇','馬','羊','猴','雞','狗','豬'],
+      ELEMENTS: ['木','火','土','金','水'], elementSuffix: function (e) { return e + '傾向'; },
+      OPENERS: ['這個生辰組合，帶著一種先觀察、再行動的節奏。','從座標上看，你的能量傾向在關係裡先付出，再確認。'],
+      FOCUS: ['未來一段時間，工作上的判斷力會比平常更準，值得多相信自己的第一直覺。','人際關係的重心，可能會從「維持和諧」慢慢轉向「說出真實想法」。'],
+      CLOSERS: ['這不是定論，比較像是一份提醒你留意的清單。','完整報告會依你的十二宮位置，再細分到每個生活面向。']
+    },
+    "zh-CN": {
+      SUN_SIGNS: [[1,20,'摩羯座'],[2,19,'水瓶座'],[3,20,'双鱼座'],[4,20,'白羊座'],[5,21,'金牛座'],[6,21,'双子座'],[7,22,'巨蟹座'],[8,23,'狮子座'],[9,23,'处女座'],[10,23,'天秤座'],[11,22,'天蝎座'],[12,22,'射手座'],[12,31,'摩羯座']],
+      ZODIAC: ['鼠','牛','虎','兔','龙','蛇','马','羊','猴','鸡','狗','猪'],
+      ELEMENTS: ['木','火','土','金','水'], elementSuffix: function (e) { return e + '倾向'; },
+      OPENERS: ['这个生辰组合，带着一种先观察、再行动的节奏。','从坐标上看，你的能量倾向在关系里先付出，再确认。'],
+      FOCUS: ['未来一段时间，工作上的判断力会比平常更准，值得多相信自己的第一直觉。','人际关系的重心，可能会从「维持和谐」慢慢转向「说出真实想法」。'],
+      CLOSERS: ['这不是定论，比较像是一份提醒你留意的清单。','完整报告会依你的十二宫位置，再细分到每个生活面向。']
+    },
+    "en": {
+      SUN_SIGNS: [[1,20,'Capricorn'],[2,19,'Aquarius'],[3,20,'Pisces'],[4,20,'Aries'],[5,21,'Taurus'],[6,21,'Gemini'],[7,22,'Cancer'],[8,23,'Leo'],[9,23,'Virgo'],[10,23,'Libra'],[11,22,'Scorpio'],[12,22,'Sagittarius'],[12,31,'Capricorn']],
+      ZODIAC: ['Rat','Ox','Tiger','Rabbit','Dragon','Snake','Horse','Goat','Monkey','Rooster','Dog','Pig'],
+      ELEMENTS: ['Wood','Fire','Earth','Metal','Water'], elementSuffix: function (e) { return e + ' leaning'; },
+      OPENERS: ['This birth combination carries a rhythm of observing first, acting second.','From the coordinates, your energy tends to give first in relationships, then confirm.'],
+      FOCUS: ['In the coming while, your judgment at work will be sharper than usual — trust your first instinct more.','The center of gravity in your relationships may shift from “keeping the peace” to “saying what you actually think.”'],
+      CLOSERS: ['This isn’t a verdict — think of it as a checklist worth keeping an eye on.','The full report breaks this down further by each of your twelve palaces.']
+    },
+    "ja": {
+      SUN_SIGNS: [[1,20,'山羊座'],[2,19,'水瓶座'],[3,20,'魚座'],[4,20,'牡羊座'],[5,21,'牡牛座'],[6,21,'双子座'],[7,22,'蟹座'],[8,23,'獅子座'],[9,23,'乙女座'],[10,23,'天秤座'],[11,22,'蠍座'],[12,22,'射手座'],[12,31,'山羊座']],
+      ZODIAC: ['ネズミ','ウシ','トラ','ウサギ','タツ','ヘビ','ウマ','ヒツジ','サル','トリ','イヌ','イノシシ'],
+      ELEMENTS: ['木','火','土','金','水'], elementSuffix: function (e) { return e + '傾向'; },
+      OPENERS: ['この生年月日の組み合わせは、まず観察してから動くリズムを持っています。','座標から見ると、あなたのエネルギーは関係の中でまず与え、後から確認する傾向があります。'],
+      FOCUS: ['しばらくの間、仕事における判断力はいつもより冴えるはずです。最初の直感をもっと信じていい時期です。','人間関係の重心が、「調和を保つ」ことから「本音を言う」ことへと少しずつ移っていくかもしれません。'],
+      CLOSERS: ['これは断定ではなく、気に留めておくべきチェックリストのようなものです。','完全版レポートでは、十二宮それぞれの位置に応じてさらに細かく分解されます。']
+    }
+  };
+
+  var currentLang = 'zh-TW';
+  try {
+    var saved = localStorage.getItem('gm-lang');
+    if (saved && DICT[saved]) currentLang = saved;
+  } catch (e) {}
+
+  function t(key) { return (DICT[currentLang] && DICT[currentLang][key]) || (DICT['zh-TW'][key] || ''); }
+
+  function applyLang() {
+    document.documentElement.lang = currentLang;
+    document.querySelectorAll('[data-i18n]').forEach(function (el) {
+      var key = el.getAttribute('data-i18n');
+      var val = t(key);
+      if (!val) return;
+      if (el.hasAttribute('data-i18n-html')) el.innerHTML = val; else el.textContent = val;
+    });
+    document.querySelectorAll('[data-i18n-placeholder]').forEach(function (el) {
+      el.placeholder = t(el.getAttribute('data-i18n-placeholder'));
+    });
+    document.querySelectorAll('.lang-switch button').forEach(function (b) {
+      b.setAttribute('aria-pressed', String(b.getAttribute('data-lang') === currentLang));
+    });
+    if (!document.getElementById('reading').hidden) renderReading();
+  }
+
+  document.querySelectorAll('.lang-switch button').forEach(function (b) {
+    b.addEventListener('click', function () {
+      currentLang = b.getAttribute('data-lang');
+      try { localStorage.setItem('gm-lang', currentLang); } catch (e) {}
+      applyLang();
+    });
+  });
+
+  // ---------- Starfield ----------
+  var canvas = document.getElementById('starfield');
+  var ctx = canvas.getContext('2d');
+  var stars = [];
+  var dpr = Math.min(window.devicePixelRatio || 1, 2);
+
+  function sizeCanvas() {
+    var hero = canvas.parentElement;
+    var w = hero.clientWidth, h = hero.clientHeight;
+    canvas.width = w * dpr; canvas.height = h * dpr;
+    canvas.style.width = w + 'px'; canvas.style.height = h + 'px';
+    ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+    var count = Math.round((w * h) / 9000);
+    stars = [];
+    var seed = 42;
+    function rand() { seed = (seed * 16807) % 2147483647; return seed / 2147483647; }
+    for (var i = 0; i < count; i++) {
+      stars.push({
+        x: rand() * w, y: rand() * h,
+        r: 0.5 + rand() * 1.3,
+        phase: rand() * Math.PI * 2,
+        speed: 0.4 + rand() * 0.6
+      });
+    }
+  }
+
+  function drawStatic() {
+    var w = canvas.clientWidth, h = canvas.clientHeight;
+    ctx.clearRect(0, 0, w, h);
+    ctx.fillStyle = 'rgba(236,231,217,0.55)';
+    stars.forEach(function (s) {
+      ctx.globalAlpha = 0.35 + 0.35 * Math.sin(s.phase);
+      ctx.beginPath();
+      ctx.arc(s.x, s.y, s.r, 0, Math.PI * 2);
+      ctx.fill();
+    });
+    ctx.globalAlpha = 1;
+  }
+
+  var t0 = 0;
+  function animate() {
+    var w = canvas.clientWidth, h = canvas.clientHeight;
+    ctx.clearRect(0, 0, w, h);
+    stars.forEach(function (s) {
+      var a = 0.28 + 0.42 * (0.5 + 0.5 * Math.sin(t0 * 0.001 * s.speed + s.phase));
+      ctx.globalAlpha = a;
+      ctx.fillStyle = 'rgba(236,231,217,0.8)';
+      ctx.beginPath();
+      ctx.arc(s.x, s.y, s.r, 0, Math.PI * 2);
+      ctx.fill();
+    });
+    ctx.globalAlpha = 1;
+    t0 += 16;
+    requestAnimationFrame(animate);
+  }
+
+  sizeCanvas();
+  if (reduceMotion) { drawStatic(); } else { animate(); }
+  window.addEventListener('resize', function () { sizeCanvas(); if (reduceMotion) drawStatic(); });
+
+  // ---------- Reveal on scroll ----------
+  if (!reduceMotion && 'IntersectionObserver' in window) {
+    var io = new IntersectionObserver(function (entries) {
+      entries.forEach(function (e) {
+        if (e.isIntersecting) { e.target.classList.add('in-view'); io.unobserve(e.target); }
+      });
+    }, { threshold: 0.15 });
+    document.querySelectorAll('.reveal').forEach(function (el) { io.observe(el); });
+  }
+
+  // ---------- Gender toggle ----------
+  var genderVal = 'n';
+  document.querySelectorAll('.gender-toggle button').forEach(function (btn) {
+    btn.addEventListener('click', function () {
+      document.querySelectorAll('.gender-toggle button').forEach(function (b) { b.setAttribute('aria-pressed', 'false'); });
+      btn.setAttribute('aria-pressed', 'true');
+      genderVal = btn.getAttribute('data-gender');
+    });
+  });
+
+  // ---------- Demo reading generator ----------
+  function sunSign(month, day) {
+    var arr = LANG_DATA[currentLang].SUN_SIGNS;
+    for (var i = 0; i < arr.length; i++) {
+      if (month === arr[i][0] && day <= arr[i][1]) return arr[i][2];
+    }
+    return arr[arr.length - 1][2];
+  }
+  function hashStr(s) {
+    var h = 0;
+    for (var i = 0; i < s.length; i++) { h = (h * 31 + s.charCodeAt(i)) >>> 0; }
+    return h;
+  }
+
+  var btn = document.getElementById('calibrate-btn');
+  var hint = document.getElementById('form-hint');
+  var panel = document.getElementById('reading');
+  var lastDateVal = null;
+
+  function renderReading() {
+    if (!lastDateVal) return;
+    var d = new Date(lastDateVal + 'T00:00:00');
+    var month = d.getMonth() + 1, day = d.getDate(), year = d.getFullYear();
+    var ld = LANG_DATA[currentLang];
+    var seedKey = lastDateVal + '|' + document.getElementById('f-time').value + '|' + genderVal;
+    var h = hashStr(seedKey);
+
+    document.getElementById('r-sun').textContent = sunSign(month, day);
+    document.getElementById('r-zodiac').textContent = ld.ZODIAC[((year - 4) % 12 + 12) % 12];
+    document.getElementById('r-element').textContent = ld.elementSuffix(ld.ELEMENTS[day % 5]);
+
+    var text = ld.OPENERS[h % ld.OPENERS.length] + ' ' +
+      ld.FOCUS[(h >>> 3) % ld.FOCUS.length] + ' ' +
+      ld.CLOSERS[(h >>> 6) % ld.CLOSERS.length];
+    document.getElementById('r-text').textContent = text;
+  }
+
+  btn.addEventListener('click', function () {
+    var dateVal = document.getElementById('f-date').value;
+    if (!dateVal) {
+      hint.textContent = t('console.hintError');
+      hint.style.color = '#e69292';
+      document.getElementById('f-date').focus();
+      return;
+    }
+    hint.style.color = '';
+    hint.textContent = t('console.hint');
+    lastDateVal = dateVal;
+    renderReading();
+    panel.hidden = false;
+    panel.scrollIntoView({ behavior: reduceMotion ? 'auto' : 'smooth', block: 'nearest' });
+  });
+
+  // ---------- Cross-page navigation ----------
+  var AUTH_URL = 'auth.html';
+
+  function goToAuth(mode, plan) {
+    var qs = new URLSearchParams();
+    qs.set('mode', mode);
+    qs.set('plan', plan || 'free');
+    if (lastDateVal) {
+      qs.set('d', lastDateVal);
+      var timeVal = document.getElementById('f-time').value;
+      var cityVal = document.getElementById('f-city').value;
+      if (timeVal) qs.set('t', timeVal);
+      if (cityVal) qs.set('c', cityVal);
+      qs.set('g', genderVal);
+    }
+    window.location.href = AUTH_URL + '?' + qs.toString();
+  }
+
+  document.getElementById('nav-cta-btn').addEventListener('click', function () { goToAuth('signup', 'free'); });
+  document.getElementById('plan1-btn').addEventListener('click', function () { goToAuth('signup', 'free'); });
+  document.getElementById('plan2-btn').addEventListener('click', function () { goToAuth('signup', 'premium'); });
+  document.getElementById('reading-cta-btn').addEventListener('click', function () { goToAuth('signup', 'premium'); });
+
+  applyLang();
+})();
+</script>
+
+</body></html>

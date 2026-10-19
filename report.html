@@ -1,0 +1,1105 @@
+<!doctype html><html><head><meta charset=utf8><meta name=viewport content="width=device-width,initial-scale=1"><style>:root{color-scheme:light}body{margin:0;padding:0;font:14px -apple-system,BlinkMacSystemFont,sans-serif;background:#faf9f5;color:#141413}img{max-width:100%}[hidden]:not([hidden=until-found]){display:none!important}</style></head><body>
+<title>觀命所命盤報告</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Noto+Serif+TC:wght@500;600;700&family=Noto+Sans+TC:wght@400;500;600;700&family=Cormorant+Garamond:ital,wght@0,500;0,600;1,500;1,600&display=swap">
+<style>
+  :root {
+    --void: #0a0d18;
+    --void-raised: #141a2c;
+    --ink: #ece7da;
+    --ink-soft: #a3a4c4;
+    --ink-faint: #8386ad;
+    --brass: #c99a4c;
+    --brass-bright: #e6c383;
+    --verdigris: #5c9c8c;
+    --line: rgba(236,231,217,0.13);
+    --line-strong: rgba(236,231,217,0.24);
+    --shadow: 0 20px 60px -25px rgba(0,0,0,0.7);
+  }
+  * { box-sizing: border-box; }
+  [hidden] { display: none !important; }
+  body {
+    margin: 0; background: var(--void); color: var(--ink);
+    font-family: "Noto Sans TC", "PingFang TC", "Microsoft JhengHei", sans-serif;
+    line-height: 1.7;
+  }
+  h1, h2, h3 { font-family: "Noto Serif TC", serif; margin: 0; text-wrap: balance; }
+  p { margin: 0; }
+  .data, .eyebrow { font-family: "Cormorant Garamond", serif; font-variant-numeric: tabular-nums; }
+  button { font-family: inherit; cursor: pointer; }
+  :focus-visible { outline: 2px solid var(--brass-bright); outline-offset: 3px; }
+  .wrap { max-width: 1040px; margin: 0 auto; padding: 0 clamp(1.1rem, 4vw, 2.5rem); }
+
+  .topbar {
+    display: flex; align-items: center; justify-content: space-between; gap: 0.8rem; flex-wrap: wrap;
+    padding: 1.1rem clamp(1.1rem, 4vw, 2.5rem);
+    border-bottom: 1px solid var(--line);
+  }
+  .brand { display: flex; align-items: center; gap: 0.55rem; text-decoration: none; color: inherit; }
+  .brand svg { width: 24px; height: 24px; }
+  .brand span { font-family: "Noto Serif TC", serif; font-weight: 700; font-size: 1.05rem; }
+  .topbar-right { display: flex; align-items: center; gap: 0.8rem; }
+  .demo-pill {
+    font-size: 0.72rem; letter-spacing: 0.06em; color: var(--brass);
+    border: 1px solid var(--line-strong); border-radius: 999px; padding: 0.25rem 0.7rem; white-space: nowrap;
+  }
+  .lang-switch { display: flex; gap: 2px; background: var(--void-raised); border: 1px solid var(--line-strong); border-radius: 999px; padding: 2px; }
+  .lang-switch button { background: none; border: none; color: var(--ink-faint); font-size: 0.72rem; font-weight: 600; padding: 0.32rem 0.6rem; border-radius: 999px; }
+  .lang-switch button[aria-pressed="true"] { background: var(--brass); color: #241a08; }
+  .lang-switch button:hover:not([aria-pressed="true"]) { color: var(--ink); }
+
+  .report-head { padding: 2.4rem 0 1.6rem; border-bottom: 1px solid var(--line); }
+  .report-head .eyebrow { display: block; color: var(--verdigris); font-style: italic; font-size: 0.95rem; margin-bottom: 0.4rem; }
+  .report-head h1 { font-size: clamp(1.5rem, 3vw, 2rem); font-weight: 700; }
+  .meta-row { margin-top: 0.9rem; display: flex; flex-wrap: wrap; gap: 0.4rem 1.3rem; font-size: 0.84rem; color: var(--ink-faint); }
+  .meta-row b { color: var(--ink-soft); font-weight: 500; }
+
+  .stat-strip { display: grid; grid-template-columns: repeat(auto-fit, minmax(130px,1fr)); gap: 0.9rem; padding: 1.8rem 0; }
+  .stat-card { background: var(--void-raised); border: 1px solid var(--line); border-radius: 10px; padding: 1rem 1.1rem; }
+  .stat-card .lbl { font-size: 0.74rem; color: var(--ink-faint); letter-spacing: 0.03em; }
+  .stat-card .val { font-family: "Noto Serif TC", serif; font-size: 1.25rem; font-weight: 700; color: var(--brass-bright); margin-top: 0.3rem; }
+
+  .tier-switch { display: flex; gap: 2px; background: var(--void-raised); border: 1px solid var(--line-strong); border-radius: 999px; padding: 2px; }
+  .tier-switch button { background: none; border: none; color: var(--ink-faint); font-size: 0.72rem; font-weight: 600; padding: 0.32rem 0.65rem; border-radius: 999px; white-space: nowrap; }
+  .tier-switch button[aria-pressed="true"] { background: var(--verdigris); color: #0d1a17; }
+  .tier-switch button:hover:not([aria-pressed="true"]) { color: var(--ink); }
+
+  .tier-banner {
+    display: flex; align-items: center; justify-content: space-between; gap: 1rem; flex-wrap: wrap;
+    background: var(--void-raised); border: 1px solid var(--line-strong); border-radius: 10px;
+    padding: 0.9rem 1.2rem; margin-bottom: 1.6rem; font-size: 0.86rem; color: var(--ink-soft);
+  }
+  .tier-banner.premium { border-color: rgba(92,156,140,0.4); }
+  .tier-banner .upgrade-btn {
+    background: var(--brass); color: #241a08; border: none; border-radius: 6px;
+    padding: 0.5rem 1rem; font-size: 0.82rem; font-weight: 700; white-space: nowrap;
+  }
+  .tier-banner .upgrade-btn:hover { background: var(--brass-bright); }
+
+  .locked-wrap { position: relative; }
+  .locked-wrap.is-locked .locked-inner { filter: blur(5px); opacity: 0.5; pointer-events: none; user-select: none; }
+  .locked-overlay { display: none; }
+  .locked-wrap.is-locked .locked-overlay {
+    display: flex; position: absolute; inset: 0; flex-direction: column; align-items: center; justify-content: center;
+    gap: 0.5rem; text-align: center; padding: 0.9rem; background: rgba(10,13,24,0.4); border-radius: inherit;
+  }
+  .locked-overlay svg { width: 20px; height: 20px; color: var(--brass); }
+  .locked-overlay p { font-size: 0.78rem; color: var(--ink-soft); max-width: 26ch; }
+  .locked-overlay button {
+    background: var(--brass); color: #241a08; border: none; border-radius: 6px;
+    padding: 0.45rem 0.95rem; font-size: 0.78rem; font-weight: 700;
+  }
+  .locked-overlay button:hover { background: var(--brass-bright); }
+
+  .house.locked .stars { filter: blur(3px); opacity: 0.5; user-select: none; }
+  .house.locked .name { opacity: 0.6; }
+
+  .tarot-card.locked h3, .tarot-card.locked p { filter: blur(4px); opacity: 0.5; user-select: none; }
+  .tarot-note {
+    margin-top: 1rem; font-size: 0.82rem; color: var(--ink-faint);
+    display: flex; align-items: center; justify-content: space-between; gap: 0.8rem; flex-wrap: wrap;
+    background: var(--void-raised); border: 1px dashed var(--line-strong); border-radius: 8px; padding: 0.7rem 0.9rem;
+  }
+  .tarot-note button {
+    background: var(--brass); color: #241a08; border: none; border-radius: 6px;
+    padding: 0.4rem 0.85rem; font-size: 0.76rem; font-weight: 700; white-space: nowrap;
+  }
+  .tarot-note button:hover { background: var(--brass-bright); }
+
+  .chat-locked-note {
+    font-size: 0.82rem; color: var(--ink-faint); background: var(--void-raised);
+    border: 1px dashed var(--line-strong); border-radius: 8px; padding: 0.8rem 0.95rem;
+    display: flex; align-items: center; justify-content: space-between; gap: 0.8rem; flex-wrap: wrap; max-width: 680px;
+  }
+  .chat-locked-note button {
+    background: var(--brass); color: #241a08; border: none; border-radius: 6px;
+    padding: 0.42rem 0.9rem; font-size: 0.78rem; font-weight: 700; white-space: nowrap;
+  }
+  .chat-locked-note button:hover { background: var(--brass-bright); }
+
+  .tabs { display: flex; gap: 0.3rem; border-bottom: 1px solid var(--line); overflow-x: auto; }
+  .tabs button {
+    background: none; border: none; color: var(--ink-faint); font-size: 0.92rem; font-weight: 600;
+    padding: 0.8rem 1.1rem; border-bottom: 2px solid transparent; white-space: nowrap;
+  }
+  .tabs button[aria-selected="true"] { color: var(--brass-bright); border-bottom-color: var(--brass); }
+  .tabs button:hover { color: var(--ink); }
+
+  .panel { padding: 2.2rem 0; }
+  .panel[hidden] { display: none; }
+
+  /* ---- Chart layout ---- */
+  .chart-summary {
+    font-size: 0.96rem; color: var(--ink); max-width: 74ch; line-height: 1.8;
+    background: var(--void-raised); border: 1px solid var(--line); border-left: 3px solid var(--brass);
+    border-radius: 8px; padding: 1rem 1.2rem; margin-bottom: 1.6rem;
+  }
+  .chart-layout { display: grid; grid-template-columns: minmax(280px, 400px) 1fr; gap: 2rem; align-items: start; }
+  @media (max-width: 760px) { .chart-layout { grid-template-columns: 1fr; } }
+  .chart {
+    display: grid; grid-template-columns: repeat(4, 1fr); grid-template-rows: repeat(4, 1fr);
+    gap: 1px; background: var(--line-strong); border: 1px solid var(--line-strong);
+    border-radius: 10px; overflow: hidden; aspect-ratio: 1;
+  }
+  .house { background: var(--void-raised); padding: 0.55rem 0.6rem; display: flex; flex-direction: column; gap: 0.25rem; }
+  .house .name { font-size: 0.68rem; color: var(--ink-faint); letter-spacing: 0.03em; }
+  .house .stars { font-family: "Noto Serif TC", serif; font-size: 0.78rem; color: var(--brass-bright); line-height: 1.3; }
+  .house-center {
+    grid-column: 2 / 4; grid-row: 2 / 4; background: #0d1220;
+    display: flex; flex-direction: column; align-items: center; justify-content: center;
+    text-align: center; gap: 0.3rem; padding: 0.5rem;
+  }
+  .house-center .cname { font-family: "Noto Serif TC", serif; font-weight: 700; font-size: 1rem; color: var(--ink); }
+  .house-center .cmeta { font-size: 0.7rem; color: var(--ink-faint); }
+
+  .narrative-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(230px,1fr)); gap: 1rem; }
+  .narrative-card { background: var(--void-raised); border: 1px solid var(--line); border-radius: 10px; padding: 1.2rem 1.3rem; }
+  .narrative-card h3 { font-size: 0.98rem; font-weight: 600; color: var(--brass); margin-bottom: 0.5rem; }
+  .narrative-card p { font-size: 0.9rem; color: var(--ink-soft); }
+
+  /* ---- Daily ---- */
+  .daily-card { background: var(--void-raised); border: 1px solid var(--line); border-radius: 10px; padding: 1.6rem 1.7rem; max-width: 640px; }
+  .daily-card .date { color: var(--brass); font-style: italic; font-size: 1rem; margin-bottom: 0.6rem; display: block; }
+  .daily-card p.body-text { font-size: 0.96rem; color: var(--ink); margin-bottom: 1.4rem; }
+  .meters { display: flex; flex-direction: column; gap: 1.1rem; }
+  .meter-block { display: flex; flex-direction: column; gap: 0.35rem; }
+  .meter-row { display: grid; grid-template-columns: 70px 1fr 40px; align-items: center; gap: 0.8rem; font-size: 0.85rem; }
+  .meter-note { font-size: 0.83rem; color: var(--ink-soft); }
+  .meter-row .lbl { color: var(--ink-soft); }
+  .meter-track { height: 6px; background: #0a0e1c; border-radius: 999px; overflow: hidden; }
+  .meter-fill { height: 100%; background: linear-gradient(90deg, var(--verdigris), var(--brass)); border-radius: 999px; }
+  .meter-row .pct { text-align: right; color: var(--ink-faint); font-family: "Cormorant Garamond", serif; }
+
+  /* ---- Tarot ---- */
+  .tarot-row { display: grid; grid-template-columns: repeat(3, 1fr); gap: 1.2rem; }
+  @media (max-width: 640px) { .tarot-row { grid-template-columns: 1fr; } }
+  .tarot-summary {
+    margin-top: 1.2rem; font-size: 0.94rem; color: var(--ink); max-width: 74ch; line-height: 1.8;
+    background: var(--void-raised); border: 1px solid var(--line); border-left: 3px solid var(--brass);
+    border-radius: 8px; padding: 1rem 1.2rem;
+  }
+  .tarot-card { background: var(--void-raised); border: 1px solid var(--line); border-radius: 10px; padding: 1.4rem 1.1rem; text-align: center; }
+  .tarot-card .position { font-size: 0.72rem; letter-spacing: 0.1em; text-transform: uppercase; color: var(--ink-faint); margin-bottom: 0.9rem; }
+  .tarot-glyph { width: 46px; height: 46px; margin: 0 auto 0.8rem; color: var(--brass); }
+  .tarot-card h3 { font-size: 1.05rem; font-weight: 700; margin-bottom: 0.6rem; }
+  .tarot-card p { font-size: 0.86rem; color: var(--ink-soft); }
+
+  /* ---- Name ---- */
+  .name-note { font-size: 0.84rem; color: var(--ink-faint); max-width: 60ch; margin-bottom: 1.2rem; }
+  .name-summary {
+    margin-top: 1.2rem; font-size: 0.94rem; color: var(--ink); max-width: 74ch; line-height: 1.8;
+    background: var(--void-raised); border: 1px solid var(--line); border-left: 3px solid var(--brass);
+    border-radius: 8px; padding: 1rem 1.2rem;
+  }
+  .table-wrap { overflow-x: auto; border: 1px solid var(--line); border-radius: 10px; }
+  table { border-collapse: collapse; width: 100%; min-width: 480px; background: var(--void-raised); font-size: 0.9rem; }
+  th, td { text-align: left; padding: 0.7rem 0.9rem; border-bottom: 1px solid var(--line); }
+  thead th { font-size: 0.72rem; letter-spacing: 0.06em; text-transform: uppercase; color: var(--ink-faint); }
+  tbody tr:last-child td { border-bottom: none; }
+  td.data { color: var(--brass-bright); font-size: 1.05rem; }
+
+  /* ---- Chat ---- */
+  .chat-section { border-top: 1px solid var(--line); padding: 2.4rem 0 3rem; }
+  .chat-head { margin-bottom: 1.2rem; }
+  .chat-head .eyebrow { color: var(--brass); display: block; font-style: italic; margin-bottom: 0.3rem; }
+  .chat-log { display: flex; flex-direction: column; gap: 0.8rem; max-width: 680px; margin-bottom: 1rem; }
+  .bubble { max-width: 80%; padding: 0.7rem 0.95rem; border-radius: 10px; font-size: 0.9rem; line-height: 1.6; }
+  .bubble.ai { align-self: flex-start; background: var(--void-raised); border: 1px solid var(--line); color: var(--ink); }
+  .bubble.user { align-self: flex-end; background: #1c1710; border: 1px solid rgba(201,154,76,0.35); color: var(--ink); }
+  .chat-input-row { display: flex; gap: 0.6rem; max-width: 680px; }
+  .chat-input-row input {
+    flex: 1; background: #0a0e1c; border: 1px solid var(--line-strong); border-radius: 7px;
+    padding: 0.65rem 0.9rem; color: var(--ink); font-size: 0.9rem; font-family: "Noto Sans TC", sans-serif;
+  }
+  .chat-input-row input:focus { border-color: var(--brass); }
+  .chat-send {
+    background: var(--brass); color: #241a08; border: none; border-radius: 7px;
+    padding: 0.6rem 1.2rem; font-weight: 700; font-size: 0.88rem;
+  }
+  .chat-send:hover { background: var(--brass-bright); }
+
+  footer { border-top: 1px solid var(--line); padding: 2.2rem 0 3rem; }
+  .footer-legal { font-size: 0.78rem; color: var(--ink-faint); max-width: 68ch; line-height: 1.8; }
+</style>
+
+<nav class="topbar">
+  <a class="brand" id="brand-link" href="#">
+    <svg viewBox="0 0 32 32" fill="none" aria-hidden="true">
+      <circle cx="16" cy="16" r="10.5" stroke="var(--brass)" stroke-width="1.1"/>
+      <ellipse cx="16" cy="16" rx="10.5" ry="4" stroke="var(--verdigris)" stroke-width="1.1"/>
+      <circle cx="16" cy="16" r="1.6" fill="var(--brass-bright)"/>
+    </svg>
+    <span data-i18n="brand">觀命所</span>
+  </a>
+  <div class="topbar-right">
+    <span class="demo-pill" data-i18n="demo.pill">示範讀數 · Demo Report</span>
+    <div class="tier-switch" role="group" aria-label="Preview tier">
+      <button data-tier="free" aria-pressed="true" data-i18n="tier.freeLabel">免費版</button>
+      <button data-tier="premium" aria-pressed="false" data-i18n="tier.premiumLabel">付費版</button>
+    </div>
+    <div class="lang-switch" role="group" aria-label="Language">
+      <button data-lang="zh-TW" aria-pressed="true">繁</button>
+      <button data-lang="zh-CN" aria-pressed="false">简</button>
+      <button data-lang="en" aria-pressed="false">EN</button>
+      <button data-lang="ja" aria-pressed="false">日</button>
+    </div>
+  </div>
+</nav>
+
+<div class="wrap">
+  <header class="report-head">
+    <span class="eyebrow" data-i18n="head.eyebrow">星圖校準結果</span>
+    <h1 id="report-title">—</h1>
+    <div class="meta-row">
+      <span><b data-i18n="meta.birth">生辰</b> <span id="meta-birth">—</span></span>
+      <span><b data-i18n="meta.city">出生地</b> <span id="meta-city">—</span></span>
+      <span><b data-i18n="meta.generated">產生時間</b> <span id="meta-generated">—</span></span>
+    </div>
+  </header>
+
+  <div class="stat-strip">
+    <div class="stat-card"><span class="lbl" data-i18n="stat.sun">太陽星座</span><div class="val" id="stat-sun">—</div></div>
+    <div class="stat-card"><span class="lbl" data-i18n="stat.zodiac">生肖</span><div class="val" id="stat-zodiac">—</div></div>
+    <div class="stat-card"><span class="lbl" data-i18n="stat.element">五行傾向</span><div class="val" id="stat-element">—</div></div>
+    <div class="stat-card"><span class="lbl" data-i18n="stat.lord">命主星</span><div class="val" id="stat-lord">—</div></div>
+  </div>
+
+  <div class="tier-banner" id="tier-banner"></div>
+
+  <div class="tabs" role="tablist">
+    <button role="tab" aria-selected="true" data-panel="p-chart" data-i18n="tab.chart">紫微命盤</button>
+    <button role="tab" aria-selected="false" data-panel="p-daily" data-i18n="tab.daily">每日運勢</button>
+    <button role="tab" aria-selected="false" data-panel="p-tarot" data-i18n="tab.tarot">塔羅牌陣</button>
+    <button role="tab" aria-selected="false" data-panel="p-name" data-i18n="tab.name">姓名學</button>
+  </div>
+
+  <section class="panel" id="p-chart">
+    <p class="chart-summary" id="chart-summary"></p>
+    <div class="chart-layout">
+      <div class="chart" id="chart-grid">
+        <div class="house" data-house="life" style="grid-column:1;grid-row:1"><span class="name"></span><span class="stars"></span></div>
+        <div class="house" data-house="siblings" style="grid-column:2;grid-row:1"><span class="name"></span><span class="stars"></span></div>
+        <div class="house" data-house="spouse" style="grid-column:3;grid-row:1"><span class="name"></span><span class="stars"></span></div>
+        <div class="house" data-house="children" style="grid-column:4;grid-row:1"><span class="name"></span><span class="stars"></span></div>
+        <div class="house" data-house="parents" style="grid-column:1;grid-row:2"><span class="name"></span><span class="stars"></span></div>
+        <div class="house-center">
+          <span class="cname" id="chart-center-name">—</span>
+          <span class="cmeta" id="chart-center-birth">—</span>
+          <span class="cmeta" id="chart-center-ju">—</span>
+        </div>
+        <div class="house" data-house="wealth" style="grid-column:4;grid-row:2"><span class="name"></span><span class="stars"></span></div>
+        <div class="house" data-house="wellbeing" style="grid-column:1;grid-row:3"><span class="name"></span><span class="stars"></span></div>
+        <div class="house" data-house="health" style="grid-column:4;grid-row:3"><span class="name"></span><span class="stars"></span></div>
+        <div class="house" data-house="property" style="grid-column:1;grid-row:4"><span class="name"></span><span class="stars"></span></div>
+        <div class="house" data-house="career" style="grid-column:2;grid-row:4"><span class="name"></span><span class="stars"></span></div>
+        <div class="house" data-house="friends" style="grid-column:3;grid-row:4"><span class="name"></span><span class="stars"></span></div>
+        <div class="house" data-house="travel" style="grid-column:4;grid-row:4"><span class="name"></span><span class="stars"></span></div>
+      </div>
+
+      <div class="narrative-grid">
+        <div class="narrative-card"><h3 data-i18n="n.personality.h">性格</h3><p id="n-personality"></p></div>
+        <div class="narrative-card" id="card-career"><h3 data-i18n="n.career.h">事業</h3><p id="n-career"></p></div>
+        <div class="narrative-card" id="card-wealth"><h3 data-i18n="n.wealth.h">財運</h3><p id="n-wealth"></p></div>
+        <div class="narrative-card" id="card-love"><h3 data-i18n="n.love.h">感情</h3><p id="n-love"></p></div>
+        <div class="narrative-card locked-wrap is-locked" id="locked-combo" style="grid-column:1/-1" hidden>
+          <div class="locked-inner"><h3 data-i18n="n.career.h">事業</h3><p>████████████████</p></div>
+          <div class="locked-overlay">
+            <svg viewBox="0 0 24 24" fill="none" aria-hidden="true"><rect x="5" y="10" width="14" height="10" rx="1.5" stroke="currentColor" stroke-width="1.5"/><path d="M8 10V7a4 4 0 018 0v3" stroke="currentColor" stroke-width="1.5"/></svg>
+            <p data-i18n="lock.chartCombo.desc">升級解鎖事業、財運與感情的完整解讀</p>
+            <button type="button" class="lock-upgrade-btn" data-i18n="tier.upgradeBtn">立即升級 →</button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="panel" id="p-daily" hidden>
+    <div class="daily-card">
+      <span class="date" id="daily-date">—</span>
+      <p class="body-text" id="daily-text"></p>
+      <div class="meters">
+        <div class="meter-block">
+          <div class="meter-row"><span class="lbl" data-i18n="m.love">愛情</span><div class="meter-track"><div class="meter-fill" id="m-love"></div></div><span class="pct" id="p-love"></span></div>
+          <p class="meter-note" id="note-love"></p>
+        </div>
+        <div class="meter-block">
+          <div class="meter-row"><span class="lbl" data-i18n="m.career">事業</span><div class="meter-track"><div class="meter-fill" id="m-career"></div></div><span class="pct" id="p-career"></span></div>
+          <p class="meter-note" id="note-career"></p>
+        </div>
+        <div class="meter-block">
+          <div class="meter-row"><span class="lbl" data-i18n="m.wealth">財運</span><div class="meter-track"><div class="meter-fill" id="m-wealth"></div></div><span class="pct" id="p-wealth"></span></div>
+          <p class="meter-note" id="note-wealth"></p>
+        </div>
+        <div class="meter-block">
+          <div class="meter-row"><span class="lbl" data-i18n="m.health">健康</span><div class="meter-track"><div class="meter-fill" id="m-health"></div></div><span class="pct" id="p-health"></span></div>
+          <p class="meter-note" id="note-health"></p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="panel" id="p-tarot" hidden>
+    <div class="tarot-row" id="tarot-row"></div>
+    <p class="tarot-summary" id="tarot-summary"></p>
+    <div class="tarot-note" id="tarot-note" hidden>
+      <span data-i18n="lock.tarotNote">免費版僅開放「現在」牌義，升級解鎖完整三張牌陣解讀。</span>
+      <button type="button" class="lock-upgrade-btn" data-i18n="tier.upgradeBtn">立即升級 →</button>
+    </div>
+  </section>
+
+  <section class="panel" id="p-name" hidden>
+    <div class="locked-wrap" id="name-locked-wrap">
+      <div class="locked-inner">
+        <p class="name-note" data-i18n="name.note">五格數理以筆畫示意計算，僅供互動展示；正式版將採用完整姓名學筆畫字典換算。</p>
+        <div class="table-wrap">
+          <table>
+            <thead><tr><th data-i18n="name.col1">格位</th><th data-i18n="name.col2">數值</th><th data-i18n="name.col3">意涵示意</th></tr></thead>
+            <tbody id="name-table-body"></tbody>
+          </table>
+        </div>
+        <p class="name-summary" id="name-summary"></p>
+      </div>
+      <div class="locked-overlay">
+        <svg viewBox="0 0 24 24" fill="none" aria-hidden="true"><rect x="5" y="10" width="14" height="10" rx="1.5" stroke="currentColor" stroke-width="1.5"/><path d="M8 10V7a4 4 0 018 0v3" stroke="currentColor" stroke-width="1.5"/></svg>
+        <p data-i18n="lock.nameTitle" style="color:var(--ink);font-weight:600;">AI 姓名學為訂閱限定功能</p>
+        <p data-i18n="lock.nameDesc">升級深度校準方案，解鎖完整五格數理與命名建議。</p>
+        <button type="button" class="lock-upgrade-btn" data-i18n="tier.upgradeBtn">立即升級 →</button>
+      </div>
+    </div>
+  </section>
+
+  <section class="chat-section">
+    <div class="chat-head">
+      <span class="eyebrow" data-i18n="chat.eyebrow">繼續追問</span>
+      <h2 data-i18n="chat.title">針對這份報告，還想知道什麼？</h2>
+    </div>
+    <div class="chat-log" id="chat-log">
+      <div class="bubble ai" id="chat-seed" data-i18n="chat.seed">這是你目前的星圖摘要。你可以針對任何一段追問，例如「財帛宮的廉貞代表什麼」，或是「這段時間適合換工作嗎」。</div>
+    </div>
+    <div class="chat-input-row" id="chat-input-row">
+      <input type="text" id="chat-input" data-i18n-placeholder="chat.placeholder" placeholder="輸入你的提問…" maxlength="120">
+      <button class="chat-send" id="chat-send" data-i18n="chat.send">送出</button>
+    </div>
+    <div class="chat-locked-note" id="chat-locked-note" hidden>
+      <span data-i18n="lock.chatNote">已達免費版提問上限（1 則）。升級解鎖無限次追問。</span>
+      <button type="button" class="lock-upgrade-btn" data-i18n="tier.upgradeBtn">立即升級 →</button>
+    </div>
+  </section>
+</div>
+
+<footer>
+  <div class="wrap">
+    <p class="footer-legal" data-i18n="footer.legal">觀命所提供的命盤、運勢與牌陣解讀，內容僅供娛樂與自我探索參考，不能取代醫療、心理、法律或財務等專業建議。本頁為產品原型示範，資料未實際儲存。</p>
+  </div>
+</footer>
+
+<script>
+(function () {
+  var LANDING_URL = 'index.html';
+  var AUTH_URL = 'auth.html';
+  document.getElementById('brand-link').href = LANDING_URL;
+
+  var params = new URLSearchParams(location.search);
+  var dateStr = params.get('d') || '1994-05-14';
+  var timeStr = params.get('t') || '';
+  var cityParam = params.get('c') || '';
+  var nameParam = params.get('n') || '';
+  var tier = params.get('tier') === 'premium' ? 'premium' : 'free';
+
+  // ---- Claude sample capability (real AI replies in the chat panel) ----
+  var sampleFn = null;
+  (async function () {
+    try {
+      if (window.claude && typeof window.claude.use === 'function') {
+        sampleFn = await window.claude.use('sample');
+      }
+    } catch (e) { sampleFn = null; }
+  })();
+
+  function goToUpgrade() {
+    var qs = new URLSearchParams();
+    qs.set('mode', 'signup');
+    qs.set('plan', 'premium');
+    if (dateStr) qs.set('d', dateStr);
+    if (timeStr) qs.set('t', timeStr);
+    if (cityParam) qs.set('c', cityParam);
+    window.location.href = AUTH_URL + '?' + qs.toString();
+  }
+
+  function hashStr(s) { var h = 0; for (var i = 0; i < s.length; i++) h = (h * 31 + s.charCodeAt(i)) >>> 0; return h; }
+
+  /* ================= i18n ================= */
+  var UI = {
+    "zh-TW": {
+      brand: "觀命所", "demo.pill": "示範讀數 · Demo Report", "head.eyebrow": "星圖校準結果",
+      "meta.birth": "生辰", "meta.city": "出生地", "meta.generated": "產生時間",
+      "stat.sun": "太陽星座", "stat.zodiac": "生肖", "stat.element": "五行傾向", "stat.lord": "命主星",
+      "tab.chart": "紫微命盤", "tab.daily": "每日運勢", "tab.tarot": "塔羅牌陣", "tab.name": "姓名學",
+      "n.personality.h": "性格", "n.career.h": "事業", "n.wealth.h": "財運", "n.love.h": "感情",
+      "m.love": "愛情", "m.career": "事業", "m.wealth": "財運", "m.health": "健康",
+      "name.note": "五格數理以筆畫示意計算，僅供互動展示；正式版將採用完整姓名學筆畫字典換算。",
+      "name.col1": "格位", "name.col2": "數值", "name.col3": "意涵示意",
+      "chat.eyebrow": "繼續追問", "chat.title": "針對這份報告，還想知道什麼？",
+      "chat.seed": "這是你目前的星圖摘要。你可以針對任何一段追問，例如「財帛宮的廉貞代表什麼」，或是「這段時間適合換工作嗎」。",
+      "chat.placeholder": "輸入你的提問…", "chat.send": "送出", "chat.thinking": "思考中…",
+      "chat.error": "AI 暫時無法回應，請稍後再試一次。",
+      "chat.instructions": "你是「觀命所」網站的AI命理助手，正在協助使用者理解他的命盤與塔羅牌陣解讀。請用繁體中文回答，語氣溫暖、口語、像朋友聊天，但保留命理專業感；每次回覆約80到150字，不要用條列式或標題。以下是使用者目前的命盤資料：\n\n",
+      "footer.legal": "觀命所提供的命盤、運勢與牌陣解讀，內容僅供娛樂與自我探索參考，不能取代醫療、心理、法律或財務等專業建議。本頁為產品原型示範，資料未實際儲存。",
+      "tier.freeLabel": "免費版", "tier.premiumLabel": "付費版", "tier.upgradeBtn": "立即升級 →",
+      "tier.banner.free": "你正在檢視免費版報告。升級解鎖完整十二宮命盤、塔羅全牌陣與 AI 姓名學。",
+      "tier.banner.premium": "深度校準方案 · 感謝訂閱，已解鎖完整報告。",
+      "lock.chartCombo.desc": "升級解鎖事業、財運與感情的完整解讀",
+      "lock.tarotNote": "免費版僅開放「現在」牌義，升級解鎖完整三張牌陣解讀。",
+      "lock.nameTitle": "AI 姓名學為訂閱限定功能", "lock.nameDesc": "升級深度校準方案，解鎖完整五格數理與命名建議。",
+      "lock.chatNote": "已達免費版提問上限（1 則）。升級解鎖無限次追問。",
+      "report.title": function (n) { return n + '的星圖報告'; },
+      "meta.birth.val": function (y, m, d, tm) { return y + '年' + m + '月' + d + '日' + (tm ? ' ' + tm : '（時間未提供）'); },
+      defaultName: "示範命主", defaultCity: "台北"
+    },
+    "zh-CN": {
+      brand: "观命所", "demo.pill": "示范读数 · Demo Report", "head.eyebrow": "星图校准结果",
+      "meta.birth": "生辰", "meta.city": "出生地", "meta.generated": "生成时间",
+      "stat.sun": "太阳星座", "stat.zodiac": "生肖", "stat.element": "五行倾向", "stat.lord": "命主星",
+      "tab.chart": "紫微命盘", "tab.daily": "每日运势", "tab.tarot": "塔罗牌阵", "tab.name": "姓名学",
+      "n.personality.h": "性格", "n.career.h": "事业", "n.wealth.h": "财运", "n.love.h": "感情",
+      "m.love": "爱情", "m.career": "事业", "m.wealth": "财运", "m.health": "健康",
+      "name.note": "五格数理以笔画示意计算，仅供互动展示；正式版将采用完整姓名学笔画字典换算。",
+      "name.col1": "格位", "name.col2": "数值", "name.col3": "意涵示意",
+      "chat.eyebrow": "继续追问", "chat.title": "针对这份报告，还想知道什么？",
+      "chat.seed": "这是你目前的星图摘要。你可以针对任何一段追问，例如「财帛宫的廉贞代表什么」，或是「这段时间适合换工作吗」。",
+      "chat.placeholder": "输入你的提问…", "chat.send": "送出", "chat.thinking": "思考中…",
+      "chat.error": "AI 暂时无法回应，请稍后再试一次。",
+      "chat.instructions": "你是「观命所」网站的AI命理助手，正在协助使用者理解他的命盘与塔罗牌阵解读。请用简体中文回答，语气温暖、口语、像朋友聊天，但保留命理专业感；每次回复约80到150字，不要用条列式或标题。以下是使用者目前的命盘资料：\n\n",
+      "footer.legal": "观命所提供的命盘、运势与牌阵解读，内容仅供娱乐与自我探索参考，不能取代医疗、心理、法律或财务等专业建议。本页为产品原型示范，资料未实际储存。",
+      "tier.freeLabel": "免费版", "tier.premiumLabel": "付费版", "tier.upgradeBtn": "立即升级 →",
+      "tier.banner.free": "你正在查看免费版报告。升级解锁完整十二宫命盘、塔罗全牌阵与 AI 姓名学。",
+      "tier.banner.premium": "深度校准方案 · 感谢订阅，已解锁完整报告。",
+      "lock.chartCombo.desc": "升级解锁事业、财运与感情的完整解读",
+      "lock.tarotNote": "免费版仅开放「现在」牌义，升级解锁完整三张牌阵解读。",
+      "lock.nameTitle": "AI 姓名学为订阅限定功能", "lock.nameDesc": "升级深度校准方案，解锁完整五格数理与命名建议。",
+      "lock.chatNote": "已达免费版提问上限（1 则）。升级解锁无限次追问。",
+      "report.title": function (n) { return n + '的星图报告'; },
+      "meta.birth.val": function (y, m, d, tm) { return y + '年' + m + '月' + d + '日' + (tm ? ' ' + tm : '（时间未提供）'); },
+      defaultName: "示范命主", defaultCity: "北京"
+    },
+    "en": {
+      brand: "Guanming Institute", "demo.pill": "Demo Report", "head.eyebrow": "Calibration result",
+      "meta.birth": "Born", "meta.city": "Birthplace", "meta.generated": "Generated",
+      "stat.sun": "Sun sign", "stat.zodiac": "Zodiac animal", "stat.element": "Element leaning", "stat.lord": "Chart ruler",
+      "tab.chart": "Zi Wei Chart", "tab.daily": "Daily", "tab.tarot": "Tarot", "tab.name": "Name Analysis",
+      "n.personality.h": "Personality", "n.career.h": "Career", "n.wealth.h": "Wealth", "n.love.h": "Love",
+      "m.love": "Love", "m.career": "Career", "m.wealth": "Wealth", "m.health": "Health",
+      "name.note": "Grid values are illustrative stroke counts for this demo; the full version uses a complete name-analysis stroke dictionary.",
+      "name.col1": "Grid", "name.col2": "Value", "name.col3": "Illustrative meaning",
+      "chat.eyebrow": "Keep asking", "chat.title": "What else do you want to know about this report?",
+      "chat.seed": "Here's a summary of your chart. You can ask about any part of it — like “what does Lianzhen in the Wealth palace mean” or “is this a good time to change jobs.”",
+      "chat.placeholder": "Type your question…", "chat.send": "Send", "chat.thinking": "Thinking…",
+      "chat.error": "The AI could not respond right now — please try again in a moment.",
+      "chat.instructions": "You are the AI astrology assistant for Guanming Institute, helping the user understand their chart and tarot reading. Reply in English, warm and conversational like a friend, while keeping a light professional touch. Keep each reply to about 60 to 100 words, no bullet points or headings. Here is the user's current chart data:\n\n",
+      "footer.legal": "Guanming Institute's charts, forecasts, and tarot readings are for entertainment and self-reflection only, and are not a substitute for professional advice. This page is a product prototype — nothing is actually stored.",
+      "tier.freeLabel": "Free", "tier.premiumLabel": "Premium", "tier.upgradeBtn": "Upgrade now →",
+      "tier.banner.free": "You are viewing the free report. Upgrade to unlock the full twelve-palace chart, the complete tarot spread, and AI name analysis.",
+      "tier.banner.premium": "Deep Calibration plan — thanks for subscribing. The full report is unlocked.",
+      "lock.chartCombo.desc": "Upgrade to unlock the full career, wealth, and love readings",
+      "lock.tarotNote": "The free tier only shows the Present card. Upgrade to unlock the full three-card spread.",
+      "lock.nameTitle": "AI name analysis is a subscriber-only feature", "lock.nameDesc": "Upgrade to Deep Calibration to unlock the full five-grid breakdown and naming suggestions.",
+      "lock.chatNote": "You have reached the free-tier question limit (1). Upgrade to ask unlimited follow-ups.",
+      "report.title": function (n) { return n + "’s Star Chart Report"; },
+      "meta.birth.val": function (y, m, d, tm) { return y + '-' + String(m).padStart(2,'0') + '-' + String(d).padStart(2,'0') + (tm ? ' ' + tm : ' (time not provided)'); },
+      defaultName: "Demo Client", defaultCity: "Taipei"
+    },
+    "ja": {
+      brand: "観命所", "demo.pill": "デモ結果", "head.eyebrow": "星図較正の結果",
+      "meta.birth": "生年月日", "meta.city": "出生地", "meta.generated": "生成日時",
+      "stat.sun": "太陽星座", "stat.zodiac": "干支", "stat.element": "五行傾向", "stat.lord": "命主星",
+      "tab.chart": "紫微命盤", "tab.daily": "毎日の運勢", "tab.tarot": "タロット", "tab.name": "姓名判断",
+      "n.personality.h": "性格", "n.career.h": "仕事", "n.wealth.h": "金運", "n.love.h": "恋愛",
+      "m.love": "恋愛", "m.career": "仕事", "m.wealth": "金運", "m.health": "健康",
+      "name.note": "五格の数値は画数の目安によるデモ表示です。正式版では姓名判断用の完全な画数辞書を使用します。",
+      "name.col1": "格", "name.col2": "数値", "name.col3": "意味の目安",
+      "chat.eyebrow": "続けて質問する", "chat.title": "このレポートについて、もっと知りたいことは？",
+      "chat.seed": "これはあなたの星図の要約です。「財帛宮の廉貞はどういう意味？」「この時期は転職に向いている？」など、どの部分についても質問できます。",
+      "chat.placeholder": "質問を入力…", "chat.send": "送信", "chat.thinking": "考えています…",
+      "chat.error": "AIが応答できませんでした。しばらくしてからもう一度お試しください。",
+      "chat.instructions": "あなたは「観命所」のAI命理アシスタントで、ユーザーが自分の命盤とタロット解読を理解する手助けをしています。日本語で、温かく会話的なトーンで、友人と話すように答えてください。専門的な雰囲気は保ちつつ、各回答は120〜200文字程度にし、箇条書きや見出しは使わないでください。以下はユーザーの現在の命盤データです：\n\n",
+      "footer.legal": "観命所が提供する命盤、運勢、タロット解読は娯楽および自己探求のための参考情報であり、専門的な助言に代わるものではありません。本ページは製品プロトタイプであり、データは実際には保存されません。",
+      "tier.freeLabel": "無料版", "tier.premiumLabel": "有料版", "tier.upgradeBtn": "今すぐアップグレード →",
+      "tier.banner.free": "現在、無料版レポートを表示しています。アップグレードすると十二宮すべての命盤、タロット全スプレッド、AI姓名学が解放されます。",
+      "tier.banner.premium": "ディープ較正プラン · ご購読ありがとうございます。完全版レポートが解放されています。",
+      "lock.chartCombo.desc": "アップグレードで仕事・金運・恋愛の完全な解読を解放",
+      "lock.tarotNote": "無料版では「現在」の一枚のみ表示されます。アップグレードで三枚のスプレッド全てを解放できます。",
+      "lock.nameTitle": "AI姓名学は有料版限定の機能です", "lock.nameDesc": "ディープ較正プランにアップグレードすると、完全な五格数理と命名提案が解放されます。",
+      "lock.chatNote": "無料版の質問上限（1件）に達しました。アップグレードで無制限に質問できます。",
+      "report.title": function (n) { return n + 'の星図レポート'; },
+      "meta.birth.val": function (y, m, d, tm) { return y + '年' + m + '月' + d + '日' + (tm ? ' ' + tm : '（時刻未入力）'); },
+      defaultName: "デモ命主", defaultCity: "台北"
+    }
+  };
+
+  var STARS = {
+    "zh-TW": { ziwei:'紫微', tianji:'天機', taiyang:'太陽', wuqu:'武曲', poyun:'破軍', tiantong:'天同', qisha:'七殺', lianzhen:'廉貞', tianfu:'天府', taiyin:'太陰', tanlang:'貪狼', jumen:'巨門', tianxiang:'天相', tianliang:'天梁', luchun:'祿存', wenqu:'文曲' },
+    "zh-CN": { ziwei:'紫微', tianji:'天机', taiyang:'太阳', wuqu:'武曲', poyun:'破军', tiantong:'天同', qisha:'七杀', lianzhen:'廉贞', tianfu:'天府', taiyin:'太阴', tanlang:'贪狼', jumen:'巨门', tianxiang:'天相', tianliang:'天梁', luchun:'禄存', wenqu:'文曲' },
+    "en": { ziwei:'Ziwei', tianji:'Tianji', taiyang:'Taiyang', wuqu:'Wuqu', poyun:'Pojun', tiantong:'Tiantong', qisha:'Qisha', lianzhen:'Lianzhen', tianfu:'Tianfu', taiyin:'Taiyin', tanlang:'Tanlang', jumen:'Jumen', tianxiang:'Tianxiang', tianliang:'Tianliang', luchun:'Luchun', wenqu:'Wenqu' },
+    "ja": { ziwei:'紫微', tianji:'天機', taiyang:'太陽', wuqu:'武曲', poyun:'破軍', tiantong:'天同', qisha:'七殺', lianzhen:'廉貞', tianfu:'天府', taiyin:'太陰', tanlang:'貪狼', jumen:'巨門', tianxiang:'天相', tianliang:'天梁', luchun:'禄存', wenqu:'文曲' }
+  };
+  var STAR_SEP = { "zh-TW": '・', "zh-CN": '・', "en": ', ', "ja": '・' };
+
+  var PALACES = {
+    "zh-TW": { life:'命宮', siblings:'兄弟', spouse:'夫妻', children:'子女', parents:'父母', wealth:'財帛', wellbeing:'福德', health:'疾厄', property:'田宅', career:'官祿', friends:'僕役', travel:'遷移' },
+    "zh-CN": { life:'命宫', siblings:'兄弟', spouse:'夫妻', children:'子女', parents:'父母', wealth:'财帛', wellbeing:'福德', health:'疾厄', property:'田宅', career:'官禄', friends:'仆役', travel:'迁移' },
+    "en": { life:'Life', siblings:'Siblings', spouse:'Spouse', children:'Children', parents:'Parents', wealth:'Wealth', wellbeing:'Wellbeing', health:'Health', property:'Property', career:'Career', friends:'Friends', travel:'Travel' },
+    "ja": { life:'命宮', siblings:'兄弟宮', spouse:'夫妻宮', children:'子女宮', parents:'父母宮', wealth:'財帛宮', wellbeing:'福徳宮', health:'疾厄宮', property:'田宅宮', career:'官禄宮', friends:'僕役宮', travel:'遷移宮' }
+  };
+  var HOUSE_STARS = {
+    life: ['ziwei','tianji'], siblings: ['taiyang'], spouse: ['wuqu','poyun'], children: ['tiantong'],
+    parents: ['qisha'], wealth: ['lianzhen'], wellbeing: ['tianliang'], health: ['tianfu'],
+    property: ['tianxiang'], career: ['jumen'], friends: ['tanlang'], travel: ['taiyin']
+  };
+
+  var LANG_DATA = {
+    "zh-TW": {
+      SUN_SIGNS: [[1,20,'摩羯座'],[2,19,'水瓶座'],[3,20,'雙魚座'],[4,20,'牡羊座'],[5,21,'金牛座'],[6,21,'雙子座'],[7,22,'巨蟹座'],[8,23,'獅子座'],[9,23,'處女座'],[10,23,'天秤座'],[11,22,'天蠍座'],[12,22,'射手座'],[12,31,'摩羯座']],
+      ZODIAC: ['鼠','牛','虎','兔','龍','蛇','馬','羊','猴','雞','狗','豬'],
+      ELEMENTS: ['木','火','土','金','水'], elementSuffix: function (e) { return e + '傾向'; },
+      LORDS: ['tanlang','jumen','luchun','wenqu','lianzhen','wuqu','poyun','wuqu','lianzhen','wenqu'],
+      JU: ['水二局','木三局','金四局','土五局','火六局'],
+      CHART_SUMMARY: [
+        function (s) { return '你的命盤以' + s.sun + '的特質為底色，加上' + s.zodiac + '年生人的行動節奏，構成了外表沉穩、內在敏銳的組合。命主星' + s.lord + '進一步強化了你在關鍵時刻的判斷力，而' + s.element + '的五行傾向，代表你的能量更適合長期蓄積，而非短期衝刺。以下四個面向，會分別說明這個組合在性格、事業、財運與感情上的具體展現。'; },
+        function (s) { return s.sun + '賦予你先觀察環境、再決定要不要行動的習慣，' + s.zodiac + '年生人的直覺與命主星' + s.lord + '的主導性，則讓你一旦真正下定決心，速度會比別人預期的快上許多。' + s.element + '五行的傾向提醒你，這段時間的重點在於「守成」與「深化」，而不是急著往外擴張。接下來的四項解讀，會依序拆解這股能量在不同生活面向的走向。'; }
+      ],
+      PERSONALITY: [
+        '你習慣先觀察再表態，看似被動，其實是在確認安全感後才願意全力投入；一旦跨過那道心理門檻，你的執行力會遠超身邊人的預期。這種謹慎讓你很少做出讓自己後悔的決定，但也容易讓機會在猶豫中悄悄溜走。這段時間建議在確認基本安全感之後，給自己設一個更短的決策期限，避免過度分析反而錯過時機。',
+        '比起主導全局，你更擅長在關鍵時刻補上別人沒想到的那一塊，這讓你在團隊裡經常扮演「隱形關鍵人物」的角色。你的價值往往要等到事情出錯、需要收拾殘局時才會被真正看見，這也讓你容易被低估、甚至被視為理所當然。學著主動讓自己的貢獻被看見、被記錄下來，會是這階段最值得練習的功課。'
+      ],
+      CAREER: [
+        '這段時間適合把手上分散的專案收攏，而不是再開新的戰線；命盤顯示，專注比多工更能為你帶來實質成果。與其同時推進三件事、每件都只做到六十分，不如集中火力把其中一件做到位——這會是你這階段最容易被上層看見的方式，也最能累積長期信任。',
+        '你在需要跨部門協調的工作上會表現得比自己預期的更好，值得主動爭取；命主星的位置顯示，你這段時間的人際資本正在悄悄累積。與其被動等待被指派任務，主動提案的成功率會比平常高出許多，這是把潛在影響力兌現成實際機會的好時機，拖得越久，優勢反而會被稀釋。'
+      ],
+      WEALTH: [
+        '不適合這個月做大額決定，先把既有的收支盤點清楚；命盤顯示財帛宮的能量偏向「守成」而非「開拓」。與其急著追逐新的投資機會，不如先確認手上的資源是否被有效運用——把漏洞補起來，往往比找到下一個機會更重要，也更划算。',
+        '小額但穩定的投入，會比一次性的大動作更符合這段時間的節奏；財運走勢偏向緩步上升，急躁反而容易打亂原本穩定的軌跡。建議把目標拆成更小的里程碑，讓每一次小成果都能被具體感受到，這種累積感會是這段時間最實在的財運指標。'
+      ],
+      LOVE: [
+        '單身的你，容易在不經意的場合遇到聊得來的人，但關鍵是要主動接話；命盤顯示這段時間的桃花帶有「需要主動開口」的性質，被動等待反而容易錯過。放下「等對方先表態」的期待，會讓機會更快浮現，也更符合這段感情運勢的走向。',
+        '有伴的你，這段時間適合把沒說出口的期待講清楚，而不是等對方猜；夫妻宮的能量顯示，沉默在這階段更容易被誤讀成疏遠。與其累積小小的不滿、等它發酵成大問題，不如挑一個雙方都平靜的時刻，把話說開，這會讓關係在這段時間反而更穩固。'
+      ],
+      DAILY_TEXT: [
+        '今天的直覺特別準，尤其是關於「要不要答應」這類選擇題；與其反覆分析利弊，不如相信第一時間浮現的答案，通常那才是最貼近真實想法的判斷。',
+        '適合把拖延已久的小事一次處理掉，會帶來意外的輕鬆感；今天處理雜事的效率，會比你預期的更高，順手清空待辦清單，心情也會跟著清爽起來。',
+        '今天不適合做重大決定，比較適合觀察與蒐集資訊；把今天當作「情報收集日」，不急著下結論，答案往往會在接下來幾天自然浮現。'
+      ],
+      DAILY_CATEGORY: {
+        love: { high: '感情運勢明顯上揚，適合主動表達心意，這兩天說出口的話比平常更容易被好好接收。', mid: '感情運勢平穩，維持目前的步調即可，不需要刻意製造話題或衝突。', low: '感情運勢略顯低迷，這兩天避免衝動的決定，先觀察，不急著下結論。' },
+        career: { high: '工作上容易得到認可，適合展現企圖心，這是主動爭取資源的好時機。', mid: '工作運勢中規中矩，按部就班最穩妥，不需要冒不必要的險。', low: '工作上容易遇到小阻礙，耐心處理即可化解，不需要因此否定自己的能力。' },
+        wealth: { high: '財運明顯活躍，但仍建議量入為出，避免把好運氣當成理所當然。', mid: '財運平穩，適合維持既有規劃，不需要臨時改變預算配置。', low: '財運稍弱，這兩天不適合做財務決定，尤其是大額或長期的承諾。' },
+        health: { high: '精神狀態極佳，適合安排需要體力與專注力的行程，效率會比平常更高。', mid: '健康狀況平穩，維持規律作息即可，不需要額外進補或劇烈調整。', low: '精神較容易疲憊，這兩天注意休息，避免硬撐著把行程排得太滿。' }
+      },
+      TAROT: [
+        {name:'高塔', meaning:'意料之外的變動，舊有的結構撐不住了，但崩解之後會看得更清楚。與其抗拒改變，不如把這次視為重新打地基的機會——短期的震盪，換來的往往是更穩固的長期基礎。'},
+        {name:'星星', meaning:'低潮之後的喘息，這張牌通常代表希望正在慢慢回來。這段時間適合放慢腳步，讓自己重新累積能量，而不急著向誰證明什麼，休息本身就是這階段的進度。'},
+        {name:'戀人', meaning:'一個需要用「選擇」而不是「感覺」來面對的關係課題。與其等待感覺自然明朗，不如誠實列出自己對這段關係真正在意的條件，答案往往在誠實面對之後就會浮現。'},
+        {name:'隱者', meaning:'需要獨處整理思緒的階段，答案不在外面，在你過去的經驗裡。刻意留一段不被打擾的時間，會比向外尋求更多建議更有幫助——你需要的不是更多資訊，而是安靜。'},
+        {name:'命運之輪', meaning:'一個不是你能完全控制的轉折點，重點是怎麼接住它。與其試圖預測或掌控結果，不如先確保自己有足夠的彈性去回應變化，準備比預測更重要。'},
+        {name:'寶劍三', meaning:'一段誠實但不好受的對話，長期來看會比繼續迴避更健康。把話說開雖然會痛一下，但拖得越久，代價通常越高——早一點面對，反而是對彼此的溫柔。'}
+      ],
+      TAROT_SUMMARY: [
+        function (p) { return '從「' + p.past + '」到「' + p.present + '」，這段歷程說明了你是如何走到現在這一步；而「' + p.future + '」則提醒你，接下來的關鍵不在於控制結果，而在於你準備好用什麼樣的心態去回應它。'; },
+        function (p) { return '「' + p.past + '」留下的影響，至今仍在「' + p.present + '」的處境裡發揮作用；當你看向「' + p.future + '」，這組牌陣想告訴你的是：現在做的每一個選擇，都比你以為的更有份量。'; }
+      ],
+      POSITIONS: ['過去','現在','未來'],
+      CHAT_REPLIES: ['這是個很好的切入點——它通常和你怎麼看待「安全感」有關，可以說說是什麼讓你想到這個問題嗎？','從命盤的角度看，這比較像是一種傾向，而不是絕對的結果，實際上還是取決於你怎麼回應當下的狀況。','如果你想更深入，可以試試塔羅牌陣，針對這個具體情境抽一組三張牌。'],
+      NAME_LABELS: ['天格','人格','地格','外格','總格'],
+      NAME_DESC: ['先天基礎，與家族根源相關的示意值，反映早年成長環境對性格的潛在影響','性格主軸，影響待人接物的方式，是五格中對日常行為最直接的一項','前半生運勢走向的示意值，與求學、初入職場階段的際遇相關','人際互動與外在機運的示意值，反映他人對你的觀感與貴人運', '一生整體格局的綜合示意值，將前四格的能量收攏成一個總體傾向'],
+      NAME_SUMMARY: [
+        '從天格、人格到地格的搭配來看，你的名字結構偏向「先蓄積、後展現」的類型——前期累積的努力，通常會在中後期一次展現出來。外格與總格則顯示，你在人際場合中容易扮演穿針引線的角色，這是這組數理組合裡較為突出的一項特質，也是值得刻意發揮的優勢。',
+        '這組五格數理的組合，顯示你的名字帶有「穩中求進」的傾向：人格與地格的搭配偏向務實，不追求快速的結果，而是重視每一步是否走得紮實。總格作為一生格局的綜合指標，暗示長期累積會是你最大的優勢來源，短期的得失不必看得太重。'
+      ]
+    },
+    "zh-CN": {
+      SUN_SIGNS: [[1,20,'摩羯座'],[2,19,'水瓶座'],[3,20,'双鱼座'],[4,20,'白羊座'],[5,21,'金牛座'],[6,21,'双子座'],[7,22,'巨蟹座'],[8,23,'狮子座'],[9,23,'处女座'],[10,23,'天秤座'],[11,22,'天蝎座'],[12,22,'射手座'],[12,31,'摩羯座']],
+      ZODIAC: ['鼠','牛','虎','兔','龙','蛇','马','羊','猴','鸡','狗','猪'],
+      ELEMENTS: ['木','火','土','金','水'], elementSuffix: function (e) { return e + '倾向'; },
+      LORDS: ['tanlang','jumen','luchun','wenqu','lianzhen','wuqu','poyun','wuqu','lianzhen','wenqu'],
+      JU: ['水二局','木三局','金四局','土五局','火六局'],
+      CHART_SUMMARY: [
+        function (s) { return '你的命盘以' + s.sun + '的特质为底色，加上' + s.zodiac + '年生人的行动节奏，构成了外表沉稳、内在敏锐的组合。命主星' + s.lord + '进一步强化了你在关键时刻的判断力，而' + s.element + '的五行倾向，代表你的能量更适合长期蓄积，而非短期冲刺。以下四个面向，会分别说明这个组合在性格、事业、财运与感情上的具体展现。'; },
+        function (s) { return s.sun + '赋予你先观察环境、再决定要不要行动的习惯，' + s.zodiac + '年生人的直觉与命主星' + s.lord + '的主导性，则让你一旦真正下定决心，速度会比别人预期的快上许多。' + s.element + '五行的倾向提醒你，这段时间的重点在于「守成」与「深化」，而不是急着往外扩张。接下来的四项解读，会依序拆解这股能量在不同生活面向的走向。'; }
+      ],
+      PERSONALITY: [
+        '你习惯先观察再表态，看似被动，其实是在确认安全感后才愿意全力投入；一旦跨过那道心理门槛，你的执行力会远超身边人的预期。这种谨慎让你很少做出让自己后悔的决定，但也容易让机会在犹豫中悄悄溜走。这段时间建议在确认基本安全感之后，给自己设一个更短的决策期限，避免过度分析反而错过时机。',
+        '比起主导全局，你更擅长在关键时刻补上别人没想到的那一块，这让你在团队里经常扮演「隐形关键人物」的角色。你的价值往往要等到事情出错、需要收拾残局时才会被真正看见，这也让你容易被低估、甚至被视为理所当然。学着主动让自己的贡献被看见、被记录下来，会是这阶段最值得练习的功课。'
+      ],
+      CAREER: [
+        '这段时间适合把手上分散的专案收拢，而不是再开新的战线；命盘显示，专注比多工更能为你带来实质成果。与其同时推进三件事、每件都只做到六十分，不如集中火力把其中一件做到位——这会是你这阶段最容易被上层看见的方式，也最能累积长期信任。',
+        '你在需要跨部门协调的工作上会表现得比自己预期的更好，值得主动争取；命主星的位置显示，你这段时间的人际资本正在悄悄累积。与其被动等待被指派任务，主动提案的成功率会比平常高出许多，这是把潜在影响力兑现成实际机会的好时机，拖得越久，优势反而会被稀释。'
+      ],
+      WEALTH: [
+        '不适合这个月做大额决定，先把既有的收支盘点清楚；命盘显示财帛宫的能量偏向「守成」而非「开拓」。与其急着追逐新的投资机会，不如先确认手上的资源是否被有效运用——把漏洞补起来，往往比找到下一个机会更重要，也更划算。',
+        '小额但稳定的投入，会比一次性的大动作更符合这段时间的节奏；财运走势偏向缓步上升，急躁反而容易打乱原本稳定的轨迹。建议把目标拆成更小的里程碑，让每一次小成果都能被具体感受到，这种累积感会是这段时间最实在的财运指标。'
+      ],
+      LOVE: [
+        '单身的你，容易在不经意的场合遇到聊得来的人，但关键是要主动接话；命盘显示这段时间的桃花带有「需要主动开口」的性质，被动等待反而容易错过。放下「等对方先表态」的期待，会让机会更快浮现，也更符合这段感情运势的走向。',
+        '有伴的你，这段时间适合把没说出口的期待讲清楚，而不是等对方猜；夫妻宫的能量显示，沉默在这阶段更容易被误读成疏远。与其累积小小的不满、等它发酵成大问题，不如挑一个双方都平静的时刻，把话说开，这会让关系在这段时间反而更稳固。'
+      ],
+      DAILY_TEXT: [
+        '今天的直觉特别准，尤其是关于「要不要答应」这类选择题；与其反复分析利弊，不如相信第一时间浮现的答案，通常那才是最贴近真实想法的判断。',
+        '适合把拖延已久的小事一次处理掉，会带来意外的轻松感；今天处理杂事的效率，会比你预期的更高，顺手清空待办清单，心情也会跟着清爽起来。',
+        '今天不适合做重大决定，比较适合观察与搜集资讯；把今天当作「情报收集日」，不急着下结论，答案往往会在接下来几天自然浮现。'
+      ],
+      DAILY_CATEGORY: {
+        love: { high: '感情运势明显上扬，适合主动表达心意，这两天说出口的话比平常更容易被好好接收。', mid: '感情运势平稳，维持目前的步调即可，不需要刻意制造话题或冲突。', low: '感情运势略显低迷，这两天避免冲动的决定，先观察，不急着下结论。' },
+        career: { high: '工作上容易得到认可，适合展现企图心，这是主动争取资源的好时机。', mid: '工作运势中规中矩，按部就班最稳妥，不需要冒不必要的险。', low: '工作上容易遇到小阻碍，耐心处理即可化解，不需要因此否定自己的能力。' },
+        wealth: { high: '财运明显活跃，但仍建议量入为出，避免把好运气当成理所当然。', mid: '财运平稳，适合维持既有规划，不需要临时改变预算配置。', low: '财运稍弱，这两天不适合做财务决定，尤其是大额或长期的承诺。' },
+        health: { high: '精神状态极佳，适合安排需要体力与专注力的行程，效率会比平常更高。', mid: '健康状况平稳，维持规律作息即可，不需要额外进补或剧烈调整。', low: '精神较容易疲惫，这两天注意休息，避免硬撑着把行程排得太满。' }
+      },
+      TAROT: [
+        {name:'高塔', meaning:'意料之外的变动，旧有的结构撑不住了，但崩解之后会看得更清楚。与其抗拒改变，不如把这次视为重新打地基的机会——短期的震荡，换来的往往是更稳固的长期基础。'},
+        {name:'星星', meaning:'低潮之后的喘息，这张牌通常代表希望正在慢慢回来。这段时间适合放慢脚步，让自己重新累积能量，而不急着向谁证明什么，休息本身就是这阶段的进度。'},
+        {name:'恋人', meaning:'一个需要用「选择」而不是「感觉」来面对的关系课题。与其等待感觉自然明朗，不如诚实列出自己对这段关系真正在意的条件，答案往往在诚实面对之后就会浮现。'},
+        {name:'隐者', meaning:'需要独处整理思绪的阶段，答案不在外面，在你过去的经验里。刻意留一段不被打扰的时间，会比向外寻求更多建议更有帮助——你需要的不是更多资讯，而是安静。'},
+        {name:'命运之轮', meaning:'一个不是你能完全控制的转折点，重点是怎么接住它。与其试图预测或掌控结果，不如先确保自己有足够的弹性去回应变化，准备比预测更重要。'},
+        {name:'宝剑三', meaning:'一段诚实但不好受的对话，长期来看会比继续回避更健康。把话说开虽然会痛一下，但拖得越久，代价通常越高——早一点面对，反而是对彼此的温柔。'}
+      ],
+      TAROT_SUMMARY: [
+        function (p) { return '从「' + p.past + '」到「' + p.present + '」，这段历程说明了你是如何走到现在这一步；而「' + p.future + '」则提醒你，接下来的关键不在于控制结果，而在于你准备好用什么样的心态去回应它。'; },
+        function (p) { return '「' + p.past + '」留下的影响，至今仍在「' + p.present + '」的处境里发挥作用；当你看向「' + p.future + '」，这组牌阵想告诉你的是：现在做的每一个选择，都比你以为的更有份量。'; }
+      ],
+      POSITIONS: ['过去','现在','未来'],
+      CHAT_REPLIES: ['这是个很好的切入点——它通常和你怎么看待「安全感」有关，可以说说是什么让你想到这个问题吗？','从命盘的角度看，这比较像是一种倾向，而不是绝对的结果，实际上还是取决于你怎么回应当下的状况。','如果你想更深入，可以试试塔罗牌阵，针对这个具体情境抽一组三张牌。'],
+      NAME_LABELS: ['天格','人格','地格','外格','总格'],
+      NAME_DESC: ['先天基础，与家族根源相关的示意值，反映早年成长环境对性格的潜在影响','性格主轴，影响待人接物的方式，是五格中对日常行为最直接的一项','前半生运势走向的示意值，与求学、初入职场阶段的际遇相关','人际互动与外在机运的示意值，反映他人对你的观感与贵人运','一生整体格局的综合示意值，将前四格的能量收拢成一个总体倾向'],
+      NAME_SUMMARY: [
+        '从天格、人格到地格的搭配来看，你的名字结构偏向「先蓄积、后展现」的类型——前期累积的努力，通常会在中后期一次展现出来。外格与总格则显示，你在人际场合中容易扮演穿针引线的角色，这是这组数理组合里较为突出的一项特质，也是值得刻意发挥的优势。',
+        '这组五格数理的组合，显示你的名字带有「稳中求进」的倾向：人格与地格的搭配偏向务实，不追求快速的结果，而是重视每一步是否走得扎实。总格作为一生格局的综合指标，暗示长期累积会是你最大的优势来源，短期的得失不必看得太重。'
+      ]
+    },
+    "en": {
+      SUN_SIGNS: [[1,20,'Capricorn'],[2,19,'Aquarius'],[3,20,'Pisces'],[4,20,'Aries'],[5,21,'Taurus'],[6,21,'Gemini'],[7,22,'Cancer'],[8,23,'Leo'],[9,23,'Virgo'],[10,23,'Libra'],[11,22,'Scorpio'],[12,22,'Sagittarius'],[12,31,'Capricorn']],
+      ZODIAC: ['Rat','Ox','Tiger','Rabbit','Dragon','Snake','Horse','Goat','Monkey','Rooster','Dog','Pig'],
+      ELEMENTS: ['Wood','Fire','Earth','Metal','Water'], elementSuffix: function (e) { return e + ' leaning'; },
+      LORDS: ['tanlang','jumen','luchun','wenqu','lianzhen','wuqu','poyun','wuqu','lianzhen','wenqu'],
+      JU: ['Water II','Wood III','Metal IV','Earth V','Fire VI'],
+      CHART_SUMMARY: [
+        function (s) { return "Your chart is grounded in the traits of " + s.sun + ", layered with the pace of a " + s.zodiac + " year, forming a combination that reads calm on the surface and sharp underneath. Your chart ruler " + s.lord + " sharpens your judgment at critical moments, while a " + s.element + " leaning means your energy is built for long accumulation rather than a short sprint. The four readings below break this combination down by personality, career, wealth, and love."; },
+        function (s) { return s.sun + " gives you the habit of reading the room before acting, and the instinct of a " + s.zodiac + " year paired with chart ruler " + s.lord + " means that once you actually decide, you move faster than people expect. The " + s.element + " leaning is a reminder that this period rewards consolidation and depth over expansion. The four readings that follow trace this energy across different areas of your life."; }
+      ],
+      PERSONALITY: [
+        "You tend to observe before you speak up, which can look passive, but you are really just confirming it is safe before committing fully. Once you cross that threshold, your follow-through outpaces what people expect of you. This caution means you rarely make choices you regret, but it can also let opportunities slip away while you deliberate. Try setting yourself a shorter decision window once the basics feel safe, so careful thinking does not tip into missed timing.",
+        "Rather than leading the room, you excel at catching the one thing everyone else missed at the crucial moment, which makes you the quiet linchpin of most teams you are on. Your value tends to become visible only when something goes wrong and needs fixing, which also makes it easy for others to take you for granted. Practicing how to make your contributions visible on your own terms is the most useful thing to work on right now."
+      ],
+      CAREER: [
+        "This is a good stretch to consolidate scattered projects rather than open new fronts — your chart favors focus over multitasking right now. Instead of pushing three things forward at sixty percent each, concentrating on getting one of them fully right will be what actually gets noticed, and it builds trust that compounds over time.",
+        "You will perform better than expected on work that needs cross-team coordination, and it is worth pursuing actively — the position of your chart ruler suggests your social capital is quietly building. Rather than waiting to be assigned tasks, proposing your own ideas will land better than usual right now, and the advantage fades the longer you wait to act on it."
+      ],
+      WEALTH: [
+        "Not the month for big financial decisions — start by getting a clear view of your existing cash flow, since the Wealth palace leans toward consolidation rather than expansion right now. Rather than chasing a new opportunity, confirming that what you already have is being used well matters more than finding the next big thing.",
+        "Small, steady contributions suit this period better than one big move — the trend is a slow, gradual rise, and impatience is more likely to disrupt it than help it. Break your goal into smaller milestones so each small win feels real; that sense of accumulation is the most reliable read on your finances right now."
+      ],
+      LOVE: [
+        "If you are single, you will likely meet someone easy to talk to in an unplanned setting, but the key is speaking up first — this period rewards initiative, and waiting for the other person to make the first move tends to mean missing the window entirely.",
+        "If you are partnered, this is a good time to voice the expectations you have been holding back rather than waiting to be guessed — the Spouse palace suggests silence is especially easy to misread as distance right now. Pick a calm moment and say it plainly rather than letting small frustrations build into a bigger issue."
+      ],
+      DAILY_TEXT: [
+        "Your instincts are unusually sharp today, especially for deciding whether to say yes to something — trust the answer that surfaces first rather than talking yourself out of it through endless analysis.",
+        "A good day to clear a small task you have been putting off — it will bring more relief than you expect, and clearing your list tends to lighten your mood along with it.",
+        "Not a day for major decisions — better suited to observing and gathering information. Treat today as a research day; the answer tends to surface naturally over the next few days without forcing it."
+      ],
+      DAILY_CATEGORY: {
+        love: { high: "Love is clearly on the rise — a good day to say what you mean, since it will land better than usual.", mid: "Love is steady — keep your current pace rather than manufacturing drama or a big conversation.", low: "Love reads a little flat right now — avoid impulsive calls over the next couple of days and just observe." },
+        career: { high: "Work brings recognition your way — a good window to show ambition and ask for what you want.", mid: "Work is business as usual — steady, step-by-step progress is the safest bet right now.", low: "Small friction is likely at work — handle it patiently, it does not reflect on your ability." },
+        wealth: { high: "Money flows more freely, but still worth spending within your means rather than assuming the streak continues.", mid: "Finances are steady — a good time to stick with your existing plan rather than adjusting it.", low: "Finances read a little weak — avoid financial decisions the next couple of days, especially big or long-term ones." },
+        health: { high: "Energy is excellent — a good day for anything demanding stamina or focus, since efficiency runs high.", mid: "Health is steady — keep your regular routine rather than making sudden changes.", low: "Energy runs low — prioritize rest over the next couple of days instead of overpacking your schedule." }
+      },
+      TAROT: [
+        {name:"The Tower", meaning:"An unexpected upheaval — the old structure could not hold, but things get clearer after it falls. Rather than resisting the change, treat it as a chance to rebuild the foundation properly; the short-term shake-up usually buys a sturdier long-term footing."},
+        {name:"The Star", meaning:"A breath after a low point — this card usually means hope is slowly returning. This is a good stretch to slow down and rebuild your reserves rather than rushing to prove anything; rest itself counts as progress right now."},
+        {name:"The Lovers", meaning:"A relationship question that calls for a choice rather than a feeling. Rather than waiting for clarity to arrive on its own, write down honestly what you actually need from this relationship — the answer tends to surface once you face it directly."},
+        {name:"The Hermit", meaning:"A stage that calls for solitude — the answer is not out there, it is in your own past experience. Deliberately protecting some uninterrupted time will help more than seeking out more outside advice right now; what you need is quiet, not more input."},
+        {name:"Wheel of Fortune", meaning:"A turning point you do not fully control — what matters is how you catch it. Rather than trying to predict or control the outcome, focus on staying flexible enough to respond well when it arrives; readiness beats prediction here."},
+        {name:"Three of Swords", meaning:"An honest but painful conversation — healthier long-term than continuing to avoid it. Saying it plainly will sting for a moment, but the cost tends to grow the longer it is put off; facing it early is the kinder option for everyone involved."}
+      ],
+      TAROT_SUMMARY: [
+        function (p) { return "From “" + p.past + "” to “" + p.present + "” traces how you arrived at where you are now, while “" + p.future + "” is a reminder that what matters next is not controlling the outcome, but the mindset you bring to meet it."; },
+        function (p) { return "The impact of “" + p.past + "” is still shaping the situation you see in “" + p.present + "”; looking toward “" + p.future + "”, this spread is telling you that the choices you make right now carry more weight than you think."; }
+      ],
+      POSITIONS: ['Past','Present','Future'],
+      CHAT_REPLIES: ['That is a good angle — it usually connects to how you think about safety. What made you think of this?','From the chart, this reads more like a tendency than an absolute outcome — it still depends on how you respond in the moment.','If you want to go deeper, try a tarot spread and pull three cards for this specific situation.'],
+      NAME_LABELS: ['Heaven Grid','Personality Grid','Earth Grid','Outer Grid','Total Grid'],
+      NAME_DESC: [
+        "An illustrative value tied to family roots and early foundations, reflecting how your early environment shaped your temperament",
+        "The core of personality — shapes how you deal with people, and the grid with the most direct read on daily behavior",
+        "An illustrative value for the trajectory of your earlier years, tied to schooling and early-career circumstances",
+        "An illustrative value for social interaction and outside opportunity, reflecting how others perceive you and your network of support",
+        "An illustrative composite value for your overall life pattern, drawing the energy of the first four grids into one overall tendency"
+      ],
+      NAME_SUMMARY: [
+        "Looking at the Heaven, Personality, and Earth grids together, your name structure leans toward accumulate first, show later — effort invested early tends to surface all at once in the middle-to-later stretch. The Outer and Total grids suggest you naturally play the connector role in social settings, a standout trait in this combination and one worth leaning into deliberately.",
+        "This five-grid combination reads as steady progress rather than a rush: the Personality and Earth grids skew practical, favoring solid steps over quick wins. The Total grid, as the composite read on your overall life pattern, suggests long-term accumulation is your biggest asset — short-term wins and losses matter less than they feel like they do."
+      ]
+    },
+    "ja": {
+      SUN_SIGNS: [[1,20,'山羊座'],[2,19,'水瓶座'],[3,20,'魚座'],[4,20,'牡羊座'],[5,21,'牡牛座'],[6,21,'双子座'],[7,22,'蟹座'],[8,23,'獅子座'],[9,23,'乙女座'],[10,23,'天秤座'],[11,22,'蠍座'],[12,22,'射手座'],[12,31,'山羊座']],
+      ZODIAC: ['ネズミ','ウシ','トラ','ウサギ','タツ','ヘビ','ウマ','ヒツジ','サル','トリ','イヌ','イノシシ'],
+      ELEMENTS: ['木','火','土','金','水'], elementSuffix: function (e) { return e + '傾向'; },
+      LORDS: ['tanlang','jumen','luchun','wenqu','lianzhen','wuqu','poyun','wuqu','lianzhen','wenqu'],
+      JU: ['水二局','木三局','金四局','土五局','火六局'],
+      CHART_SUMMARY: [
+        function (s) { return 'あなたの命盤は' + s.sun + 'の特質を土台に、' + s.zodiac + '年生まれのリズムが加わり、表向きは落ち着いていながら内面は鋭いという組み合わせを作っています。命主星の' + s.lord + 'が肝心な場面での判断力をさらに強め、' + s.element + 'の五行傾向は、あなたのエネルギーが短期決戦より長期の蓄積に向いていることを示しています。以下の四つの解読では、この組み合わせが性格・仕事・金運・恋愛にどう表れるかを順に見ていきます。'; },
+        function (s) { return s.sun + 'は、まず状況を観察してから動く習慣をあなたに与え、' + s.zodiac + '年生まれの直感と命主星' + s.lord + 'の主導力が組み合わさることで、一度腹を決めた後の動きは周囲の予想より速くなります。' + s.element + 'の五行傾向が示すのは、この時期の重点は「拡張」より「守りと深化」にあるということです。続く四つの解読で、このエネルギーが生活のさまざまな面でどう働くかを分解していきます。'; }
+      ],
+      PERSONALITY: [
+        'まず観察してから意見を言うタイプで、受け身に見えて、安全だと確認できてから全力を注ぎます。この慎重さのおかげで後悔するような決断はめったにしませんが、迷っているうちにチャンスがそっと過ぎ去ってしまうこともあります。基本的な安心感を確認したら、自分の中で決断までの期限を少し短めに設定すると、考えすぎてタイミングを逃すことを防げます。',
+        '場を仕切るより、肝心な場面で誰も気づかない部分を補うのが得意なタイプで、チームの中では「見えない要」の役割を果たすことが多いはずです。あなたの価値は、何かがうまくいかず後始末が必要になったときにようやく気づかれることが多く、そのぶん当たり前のように扱われがちです。自分の貢献を自分から見える形にして残していくことが、この時期いちばん練習する価値のある課題です。'
+      ],
+      CAREER: [
+        'この時期は新しい戦線を広げるより、散らばった案件をまとめるのに向いています。命盤は、マルチタスクより一点集中の方が実質的な成果につながることを示しています。三つのことを同時に六割の完成度で進めるより、一つのことをしっかりやり切る方が、この時期は上から見えやすく、長期的な信頼の積み上げにもつながります。',
+        '部署をまたぐ調整が必要な仕事で、自分の予想以上の力を発揮できます。積極的に手を挙げる価値があります。命主星の位置は、この時期あなたの人間関係の資本が静かに積み上がっていることを示しています。指示を待つより自分から提案する方が、通常より成功しやすい時期であり、先延ばしにするほどこの優位性は薄れていきます。'
+      ],
+      WEALTH: [
+        '今月は大きな決断には不向きです。まず今ある収支を整理しましょう。命盤の財帛宮のエネルギーは「開拓」より「守り」に傾いています。新しい投資機会を急いで追いかけるより、今持っている資源がきちんと活かされているかを確認する方が、次の機会を探すことよりも重要で、結果的に得策です。',
+        '一度に大きく動くより、少額でも安定した積み立てがこの時期には合っています。金運はゆるやかな上昇傾向にあり、焦って動くとかえってその安定した流れを乱してしまいます。目標を小さなマイルストーンに分け、小さな成果を一つひとつ実感できるようにすることが、この時期もっとも確かな金運の指標になります。'
+      ],
+      LOVE: [
+        '独身のあなたは、思いがけない場面で話が合う人に出会いやすい時期です。鍵は自分から話しかけることです。この時期の出会い運は「自分から動く」ことが前提になっており、受け身のままだとせっかくの機会を逃しやすくなります。「相手から動いてくれるのを待つ」という期待を手放すことで、機会はより早く訪れるでしょう。',
+        'パートナーがいるあなたは、言えずにいた期待をはっきり伝えるのに向いている時期です。相手に察してもらうのを待つより効果的です。夫妻宮のエネルギーは、この時期の沈黙が疎遠さと誤解されやすいことを示しています。小さな不満を溜め込んで大きな問題に育てるより、お互いが落ち着いているタイミングを選んで、はっきり話すことが関係をより安定させます。'
+      ],
+      DAILY_TEXT: [
+        '今日は「イエスと言うべきか」といった選択に対する直感が特に冴えています。何度も損得を分析するより、最初に浮かんだ答えを信じる方が、本当の気持ちに近い判断であることが多いはずです。',
+        '先延ばしにしていた小さな用事を片付けるのに向いた日です。思いがけない軽さを感じられるでしょう。今日は雑務をこなす効率が予想以上に高く、やることリストを片付けると気持ちまで軽くなります。',
+        '今日は大きな決断には向きません。観察と情報収集に徹するのが良さそうです。今日を「情報収集の日」と割り切れば、結論を急がなくても、答えは数日のうちに自然と見えてくるはずです。'
+      ],
+      DAILY_CATEGORY: {
+        love: { high: '恋愛運がはっきりと上向いています。素直な気持ちを伝えるのに向いた日で、いつもより言葉が届きやすいはずです。', mid: '恋愛運は安定しています。無理に話題や刺激を作らず、今のペースを保つのが一番です。', low: '恋愛運はやや低調です。この二日間は衝動的な決断を避け、まずは様子を見ましょう。' },
+        career: { high: '仕事で評価を得やすい時期です。積極性を見せて、必要なリソースを主張するのに向いています。', mid: '仕事運はごく標準的です。着実に一歩ずつ進めるのが、いちばん安全な選択です。', low: '仕事で小さな障害に遭いやすい時期ですが、根気よく対応すれば解決できます。自分の能力を疑う必要はありません。' },
+        wealth: { high: '金運が明らかに活発ですが、それでも収入に見合った支出を心がけましょう。', mid: '金運は安定しています。既存の計画を維持するのに向いた時期です。', low: '金運はやや弱めです。この二日間は、特に大きな金額や長期の約束に関わる決定を避けましょう。' },
+        health: { high: '心身ともに絶好調です。体力や集中力が必要な予定を入れるのに向いており、効率もいつも以上に上がります。', mid: '健康状態は安定しています。規則正しい生活リズムを保てば十分です。', low: '疲れを感じやすい時期です。この二日間は予定を詰め込みすぎず、休養を優先しましょう。' }
+      },
+      TAROT: [
+        {name:'塔', meaning:'予想外の変動。これまでの構造は保てなくなりますが、崩れた後の方が物事がはっきり見えます。変化に抵抗するより、土台を作り直す機会だと捉えましょう。短期的な揺れは、長期的にはより安定した基盤につながることが多いものです。'},
+        {name:'星', meaning:'低迷期のあとの一息。この札は希望が少しずつ戻ってきていることを示します。この時期は何かを証明しようと急ぐより、ペースを落として力を蓄え直すのに向いています。休むこと自体が、この段階では立派な前進です。'},
+        {name:'恋人', meaning:'「感覚」ではなく「選択」で向き合う必要がある関係のテーマです。感覚が自然にはっきりするのを待つより、この関係で本当に大切にしたい条件を正直に書き出してみましょう。正面から向き合うことで、答えは見えてきます。'},
+        {name:'隠者', meaning:'一人で考えを整理すべき段階。答えは外にはなく、あなた自身の過去の経験の中にあります。意識的に邪魔されない時間を確保する方が、外部にさらにアドバイスを求めるより効果的です。今必要なのは情報ではなく、静けさです。'},
+        {name:'運命の輪', meaning:'完全にはコントロールできない転換点。大切なのはそれをどう受け止めるかです。結果を予測したりコントロールしようとするより、変化にきちんと対応できる柔軟さを保っておく方が重要です。備えは予測に勝ります。'},
+        {name:'ソード3', meaning:'正直だが辛い対話。長期的には避け続けるより健全です。はっきり伝えることは一瞬つらいものですが、先延ばしにするほど代償は大きくなりがちです。早めに向き合うことが、結局はお互いへの優しさになります。'}
+      ],
+      TAROT_SUMMARY: [
+        function (p) { return '「' + p.past + '」から「' + p.present + '」への流れは、あなたが今この場所にたどり着いた経緯を物語っています。そして「' + p.future + '」が伝えているのは、これから大切なのは結果をコントロールすることではなく、どんな心構えでそれを迎えるかだということです。'; },
+        function (p) { return '「' + p.past + '」が残した影響は、今もなお「' + p.present + '」の状況に働き続けています。「' + p.future + '」に目を向けるとき、このスプレッドが伝えたいのは、今下す一つひとつの選択が、あなたが思う以上に重みを持っているということです。'; }
+      ],
+      POSITIONS: ['過去','現在','未来'],
+      CHAT_REPLIES: ['良い着眼点です——たいてい「安全感」をどう捉えるかに関係しています。なぜこの質問が気になったのか、聞かせてもらえますか？','命盤から見ると、これは絶対的な結果というより一つの傾向に近いです。実際にはその場でどう反応するか次第です。','もっと深く知りたい場合は、この具体的な状況について三枚のタロットを引いてみるのがおすすめです。'],
+      NAME_LABELS: ['天格','人格','地格','外格','総格'],
+      NAME_DESC: [
+        '家系のルーツに関わる先天的な基礎を示す目安の値で、幼少期の環境が性格に与えた潜在的な影響を反映します',
+        '性格の軸となり、人との接し方に影響する値。五格の中でも日々の行動にもっとも直接的に表れる項目です',
+        '人生前半の運勢の傾向を示す目安の値で、就学期や社会人になりたての頃の巡り合わせと関連します',
+        '対人関係や外的な機運を示す目安の値で、周囲からの見られ方や助けを得やすさを反映します',
+        '人生全体の格局を示す総合的な目安の値で、前の四格のエネルギーを一つの傾向としてまとめたものです'
+      ],
+      NAME_SUMMARY: [
+        '天格・人格・地格の組み合わせから見ると、あなたの名前の構造は「先に蓄え、後で発揮する」タイプに傾いています。前半で積み重ねた努力が、中盤から後半にかけて一気に形になりやすいのです。外格と総格は、対人関係の中であなたが橋渡し役を担いやすいことを示しており、これはこの数理の組み合わせの中でも際立った特質で、意識的に活かす価値があります。',
+        'この五格数理の組み合わせは、「着実に前進する」傾向を示しています。人格と地格の組み合わせは現実的で、速い結果よりも一歩一歩が確かかどうかを重視します。人生全体の格局を示す総格は、長期的な積み重ねがあなたの最大の強みであることを示唆しており、短期的な損得はそれほど気にしなくてよいでしょう。'
+      ]
+    }
+  };
+
+  var currentLang = 'zh-TW';
+  try { var saved = localStorage.getItem('gm-lang'); if (saved && UI[saved]) currentLang = saved; } catch (e) {}
+  function t(key) { return (UI[currentLang] && UI[currentLang][key]) || UI['zh-TW'][key] || ''; }
+
+  function applyStaticLang() {
+    document.documentElement.lang = currentLang;
+    document.querySelectorAll('[data-i18n]').forEach(function (el) {
+      var v = t(el.getAttribute('data-i18n'));
+      if (v) el.textContent = v;
+    });
+    document.querySelectorAll('[data-i18n-placeholder]').forEach(function (el) {
+      var v = t(el.getAttribute('data-i18n-placeholder'));
+      el.placeholder = v;
+      el.setAttribute('aria-label', v);
+    });
+    document.querySelectorAll('.lang-switch button').forEach(function (b) {
+      b.setAttribute('aria-pressed', String(b.getAttribute('data-lang') === currentLang));
+    });
+    document.querySelectorAll('.house').forEach(function (h) {
+      var key = h.getAttribute('data-house');
+      h.querySelector('.name').textContent = PALACES[currentLang][key];
+      h.querySelector('.stars').textContent = HOUSE_STARS[key].map(function (sk) { return STARS[currentLang][sk]; }).join(STAR_SEP[currentLang]);
+    });
+  }
+
+  document.querySelectorAll('.lang-switch button').forEach(function (b) {
+    b.addEventListener('click', function () {
+      currentLang = b.getAttribute('data-lang');
+      try { localStorage.setItem('gm-lang', currentLang); } catch (e) {}
+      applyStaticLang();
+      renderAll();
+      applyTier();
+    });
+  });
+
+  function sunSign(month, day) {
+    var arr = LANG_DATA[currentLang].SUN_SIGNS;
+    for (var i = 0; i < arr.length; i++) if (month === arr[i][0] && day <= arr[i][1]) return arr[i][2];
+    return arr[arr.length - 1][2];
+  }
+
+  var name, city, d, month, day, year, h;
+  var reportContextText = '';
+
+  function renderAll() {
+    var ld = LANG_DATA[currentLang];
+    var ui = UI[currentLang];
+    name = nameParam || ui.defaultName;
+    city = cityParam || ui.defaultCity;
+    d = new Date(dateStr + 'T00:00:00');
+    month = d.getMonth() + 1; day = d.getDate(); year = d.getFullYear();
+    h = hashStr(dateStr + '|' + timeStr + '|' + name);
+
+    document.getElementById('report-title').textContent = ui['report.title'](name);
+    document.getElementById('meta-birth').textContent = ui['meta.birth.val'](year, month, day, timeStr);
+    document.getElementById('meta-city').textContent = city;
+    document.getElementById('meta-generated').textContent = new Date().toLocaleDateString(currentLang === 'en' ? 'en-US' : currentLang, { year: 'numeric', month: 'long', day: 'numeric' });
+
+    var sunVal = sunSign(month, day);
+    var zodiacVal = ld.ZODIAC[((year - 4) % 12 + 12) % 12];
+    var elementVal = ld.ELEMENTS[day % 5];
+    var lordVal = STARS[currentLang][ld.LORDS[h % ld.LORDS.length]];
+    document.getElementById('stat-sun').textContent = sunVal;
+    document.getElementById('stat-zodiac').textContent = zodiacVal;
+    document.getElementById('stat-element').textContent = ld.elementSuffix(elementVal);
+    document.getElementById('stat-lord').textContent = lordVal;
+    document.getElementById('chart-summary').textContent = ld.CHART_SUMMARY[h % ld.CHART_SUMMARY.length]({ sun: sunVal, zodiac: zodiacVal, element: elementVal, lord: lordVal });
+
+    document.getElementById('chart-center-name').textContent = name;
+    document.getElementById('chart-center-birth').textContent = ui['meta.birth.val'](year, month, day, '').replace(/[（(].*[）)]/, '').trim();
+    document.getElementById('chart-center-ju').textContent = ld.JU[h % ld.JU.length];
+
+    document.getElementById('n-personality').textContent = ld.PERSONALITY[h % ld.PERSONALITY.length];
+    document.getElementById('n-career').textContent = ld.CAREER[(h >>> 2) % ld.CAREER.length];
+    document.getElementById('n-wealth').textContent = ld.WEALTH[(h >>> 4) % ld.WEALTH.length];
+    document.getElementById('n-love').textContent = ld.LOVE[(h >>> 6) % ld.LOVE.length];
+
+    var today = new Date();
+    var todayKey = today.toISOString().slice(0, 10);
+    var hd = hashStr(todayKey + '|' + name);
+    document.getElementById('daily-date').textContent = today.toLocaleDateString(currentLang === 'en' ? 'en-US' : currentLang, { year: 'numeric', month: 'long', day: 'numeric', weekday: 'long' });
+    document.getElementById('daily-text').textContent = ld.DAILY_TEXT[hd % ld.DAILY_TEXT.length];
+    [['love', hd], ['career', hd >>> 3], ['wealth', hd >>> 6], ['health', hd >>> 9]].forEach(function (pair) {
+      var pct = 30 + (pair[1] % 66);
+      document.getElementById('m-' + pair[0]).style.width = pct + '%';
+      document.getElementById('p-' + pair[0]).textContent = pct + '%';
+      var tier2 = pct >= 70 ? 'high' : (pct < 45 ? 'low' : 'mid');
+      document.getElementById('note-' + pair[0]).textContent = ld.DAILY_CATEGORY[pair[0]][tier2];
+    });
+
+    var positions = ld.POSITIONS;
+    var picked = []; var idx = h % ld.TAROT.length;
+    for (var i = 0; i < 3; i++) { while (picked.indexOf(idx) !== -1) idx = (idx + 1) % ld.TAROT.length; picked.push(idx); idx = (idx + 3) % ld.TAROT.length; }
+    var tarotHtml = '';
+    picked.forEach(function (pIdx, i) {
+      var card = ld.TAROT[pIdx];
+      tarotHtml += '<div class="tarot-card"><span class="position">' + positions[i] + '</span>' +
+        '<svg class="tarot-glyph" viewBox="0 0 32 32" fill="none" aria-hidden="true"><circle cx="16" cy="16" r="10" stroke="currentColor" stroke-width="1.2"/><path d="M16 6v20M6 16h20" stroke="currentColor" stroke-width="0.8" opacity="0.5"/></svg>' +
+        '<h3>' + card.name + '</h3><p>' + card.meaning + '</p></div>';
+    });
+    document.getElementById('tarot-row').innerHTML = tarotHtml;
+    var pickedNames = picked.map(function (pIdx) { return ld.TAROT[pIdx].name; });
+    document.getElementById('tarot-summary').textContent = ld.TAROT_SUMMARY[(h >>> 8) % ld.TAROT_SUMMARY.length]({ past: pickedNames[0], present: pickedNames[1], future: pickedNames[2] });
+
+    function pseudoStroke(ch) { return (ch.charCodeAt(0) % 20) + 3; }
+    var chars = name.replace(/[^一-龥]/g, '').split('');
+    if (chars.length === 0) chars = ['示', '範'];
+    var strokes = chars.map(pseudoStroke);
+    var tianGe = strokes[0] + 1;
+    var renGe = strokes[0] + (strokes[1] || strokes[0]);
+    var diGe = (strokes[1] || strokes[0]) + (strokes[2] || 1) + 1;
+    var waiGe = tianGe + diGe - renGe;
+    var zongGe = strokes.reduce(function (a, b) { return a + b; }, 0);
+    var vals = [tianGe, renGe, diGe, waiGe, zongGe];
+    document.getElementById('name-table-body').innerHTML = ld.NAME_LABELS.map(function (label, i) {
+      return '<tr><td>' + label + '</td><td class="data">' + vals[i] + '</td><td>' + ld.NAME_DESC[i] + '</td></tr>';
+    }).join('');
+    document.getElementById('name-summary').textContent = ld.NAME_SUMMARY[(h >>> 10) % ld.NAME_SUMMARY.length];
+
+    var houseLines = Object.keys(PALACES[currentLang]).map(function (key) {
+      var starsText = HOUSE_STARS[key].map(function (sk) { return STARS[currentLang][sk]; }).join(STAR_SEP[currentLang]);
+      return PALACES[currentLang][key] + ': ' + starsText;
+    }).join(' / ');
+    reportContextText = [
+      'Name: ' + name, 'Sun sign: ' + sunVal, 'Zodiac animal: ' + zodiacVal,
+      'Element: ' + elementVal, 'Chart ruler: ' + lordVal,
+      'Twelve palaces and their stars: ' + houseLines,
+      'Personality reading: ' + document.getElementById('n-personality').textContent,
+      'Career reading: ' + document.getElementById('n-career').textContent,
+      'Wealth reading: ' + document.getElementById('n-wealth').textContent,
+      'Love reading: ' + document.getElementById('n-love').textContent,
+      'Daily reading: ' + document.getElementById('daily-text').textContent,
+      'Tarot spread (past/present/future): ' + pickedNames.join(' / '),
+      'Tarot synthesis: ' + document.getElementById('tarot-summary').textContent,
+      'Name analysis synthesis: ' + document.getElementById('name-summary').textContent
+    ].join('\n');
+
+    document.getElementById('chat-seed').textContent = t('chat.seed');
+  }
+
+  // ---- Tier gating ----
+  var chatUserMsgCount = 0;
+
+  function buildTierBanner() {
+    var banner = document.getElementById('tier-banner');
+    banner.className = 'tier-banner' + (tier === 'premium' ? ' premium' : '');
+    banner.innerHTML = '';
+    var span = document.createElement('span');
+    span.textContent = t(tier === 'premium' ? 'tier.banner.premium' : 'tier.banner.free');
+    banner.appendChild(span);
+    if (tier === 'free') {
+      var btn = document.createElement('button');
+      btn.type = 'button';
+      btn.className = 'upgrade-btn';
+      btn.textContent = t('tier.upgradeBtn');
+      btn.addEventListener('click', goToUpgrade);
+      banner.appendChild(btn);
+    }
+  }
+
+  function applyTier() {
+    document.querySelectorAll('.tier-switch button').forEach(function (b) {
+      b.setAttribute('aria-pressed', String(b.getAttribute('data-tier') === tier));
+    });
+
+    buildTierBanner();
+
+    document.querySelectorAll('.house').forEach(function (hEl) {
+      var key = hEl.getAttribute('data-house');
+      hEl.classList.toggle('locked', tier === 'free' && key !== 'life');
+    });
+
+    var isFree = tier === 'free';
+    document.getElementById('card-career').hidden = isFree;
+    document.getElementById('card-wealth').hidden = isFree;
+    document.getElementById('card-love').hidden = isFree;
+    document.getElementById('locked-combo').hidden = !isFree;
+
+    var tarotCards = document.querySelectorAll('#tarot-row .tarot-card');
+    tarotCards.forEach(function (card, i) {
+      card.classList.toggle('locked', isFree && i !== 1);
+    });
+    document.getElementById('tarot-note').hidden = !isFree;
+    document.getElementById('tarot-summary').hidden = isFree;
+
+    document.getElementById('name-locked-wrap').classList.toggle('is-locked', isFree);
+
+    updateChatLockUI();
+
+    document.querySelectorAll('.lock-upgrade-btn').forEach(function (b) {
+      b.onclick = goToUpgrade;
+    });
+  }
+
+  document.querySelectorAll('.tier-switch button').forEach(function (b) {
+    b.addEventListener('click', function () {
+      tier = b.getAttribute('data-tier');
+      applyTier();
+    });
+  });
+
+  // ---- Tabs ----
+  var tabs = document.querySelectorAll('.tabs button');
+  tabs.forEach(function (tab) {
+    tab.addEventListener('click', function () {
+      tabs.forEach(function (t) { t.setAttribute('aria-selected', 'false'); });
+      tab.setAttribute('aria-selected', 'true');
+      document.querySelectorAll('.panel').forEach(function (p) { p.hidden = true; });
+      document.getElementById(tab.getAttribute('data-panel')).hidden = false;
+    });
+  });
+
+  // ---- Chat ----
+  var log = document.getElementById('chat-log');
+  var input = document.getElementById('chat-input');
+  var sendBtn = document.getElementById('chat-send');
+  var chatTurns = [];
+  var sending = false;
+
+  function addBubble(text, who) {
+    var div = document.createElement('div');
+    div.className = 'bubble ' + who;
+    div.textContent = text;
+    log.appendChild(div);
+    log.scrollTop = log.scrollHeight;
+    return div;
+  }
+  function updateChatLockUI() {
+    var usedFreeQuota = tier === 'free' && chatUserMsgCount >= 1;
+    document.getElementById('chat-input-row').hidden = usedFreeQuota;
+    document.getElementById('chat-locked-note').hidden = !usedFreeQuota;
+  }
+  function finishTurn() {
+    sending = false;
+    sendBtn.disabled = false;
+    chatUserMsgCount += 1;
+    updateChatLockUI();
+  }
+  function replyWithCannedText(text) {
+    var replies = LANG_DATA[currentLang].CHAT_REPLIES;
+    var replyIdx = hashStr(text) % replies.length;
+    setTimeout(function () { addBubble(replies[replyIdx], 'ai'); finishTurn(); }, 450);
+  }
+  function sendMessage() {
+    var text = input.value.trim();
+    if (!text || sending) return;
+    if (tier === 'free' && chatUserMsgCount >= 1) return;
+    sending = true;
+    sendBtn.disabled = true;
+    addBubble(text, 'user');
+    input.value = '';
+
+    if (!sampleFn) { replyWithCannedText(text); return; }
+
+    chatTurns.push({ role: 'user', content: text });
+    var aiDiv = addBubble(t('chat.thinking'), 'ai');
+    var started = false;
+    var turnsToSend = [{ role: 'user', content: t('chat.instructions') + reportContextText }].concat(chatTurns);
+
+    sampleFn(turnsToSend, {
+      modelTier: 'quick',
+      cache: false,
+      onText: function (u) {
+        started = true;
+        aiDiv.textContent = u.text;
+        log.scrollTop = log.scrollHeight;
+      }
+    }).then(function (res) {
+      chatTurns.push({ role: 'assistant', content: res.text });
+      while (chatTurns.length > 10) chatTurns.shift();
+      finishTurn();
+    }).catch(function (e) {
+      var permanentlyUnavailable = ['not_granted', 'sampling_disabled', 'not_declared', 'capability_disabled', 'capability_removed'].indexOf(e.code) !== -1;
+      if (permanentlyUnavailable) {
+        sampleFn = null;
+        chatTurns.pop();
+        aiDiv.remove();
+        replyWithCannedText(text);
+        return;
+      }
+      if (started && e.text) {
+        aiDiv.textContent = e.text;
+      } else {
+        aiDiv.textContent = t('chat.error');
+      }
+      chatTurns.pop();
+      finishTurn();
+    });
+  }
+  sendBtn.addEventListener('click', sendMessage);
+  input.addEventListener('keydown', function (e) { if (e.key === 'Enter') sendMessage(); });
+
+  applyStaticLang();
+  renderAll();
+  applyTier();
+})();
+</script>
+
+</body></html>
