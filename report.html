@@ -408,6 +408,9 @@
   var tier = params.get('tier') === 'premium' ? 'premium' : 'free';
 
   // ---- Claude sample capability (real AI replies in the chat panel) ----
+  // URL of the deployed chat Worker, e.g. 'https://guanming-chat.<account>.workers.dev/api/chat'.
+  // Leave empty to use the Claude Artifact capability or the built-in demo replies instead.
+  var CHAT_API = '';
   var sampleFn = null;
   (async function () {
     try {
@@ -928,7 +931,7 @@
       return PALACES[currentLang][key] + ': ' + starsText;
     }).join(' / ');
     reportContextText = [
-      'Name: ' + name, 'Sun sign: ' + sunVal, 'Zodiac animal: ' + zodiacVal,
+      'Sun sign: ' + sunVal, 'Zodiac animal: ' + zodiacVal,
       'Element: ' + elementVal, 'Chart ruler: ' + lordVal,
       'Twelve palaces and their stars: ' + houseLines,
       'Personality reading: ' + document.getElementById('n-personality').textContent,
@@ -1047,6 +1050,43 @@
     var replyIdx = hashStr(text) % replies.length;
     setTimeout(function () { addBubble(replies[replyIdx], 'ai'); finishTurn(); }, 450);
   }
+  // Real LLM replies through our own Cloudflare Worker (API key stays server-side).
+  function sendViaWorker(text) {
+    chatTurns.push({ role: 'user', content: text });
+    var aiDiv = addBubble(t('chat.thinking'), 'ai');
+    var shown = '';
+
+    fetch(CHAT_API, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ lang: currentLang, context: reportContextText, messages: chatTurns })
+    }).then(function (res) {
+      if (!res.ok) { var err = new Error('http ' + res.status); err.status = res.status; throw err; }
+      var reader = res.body.getReader();
+      var decoder = new TextDecoder();
+      function pump() {
+        return reader.read().then(function (r) {
+          if (r.done) return;
+          shown += decoder.decode(r.value, { stream: true });
+          aiDiv.textContent = shown;
+          log.scrollTop = log.scrollHeight;
+          return pump();
+        });
+      }
+      return pump();
+    }).then(function () {
+      if (!shown.trim()) throw new Error('empty');
+      chatTurns.push({ role: 'assistant', content: shown });
+      while (chatTurns.length > 10) chatTurns.shift();
+      finishTurn();
+    }).catch(function (e) {
+      chatTurns.pop();
+      if (shown.trim()) { aiDiv.textContent = shown; finishTurn(); return; }
+      if (e && (e.status === 429 || e.status === 503)) { aiDiv.textContent = t('chat.error'); finishTurn(); return; }
+      aiDiv.remove();
+      replyWithCannedText(text);
+    });
+  }
   function sendMessage() {
     var text = input.value.trim();
     if (!text || sending) return;
@@ -1056,6 +1096,7 @@
     addBubble(text, 'user');
     input.value = '';
 
+    if (CHAT_API) { sendViaWorker(text); return; }
     if (!sampleFn) { replyWithCannedText(text); return; }
 
     chatTurns.push({ role: 'user', content: text });
