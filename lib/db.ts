@@ -8,6 +8,17 @@ import type { BirthInput, Chart } from "./bazi";
 export interface ReportSection { title: string; body: string }
 export interface Report { sections: ReportSection[]; model: string; generatedAt: string }
 
+/** 角色漏斗中使用者自己提供的情境（感情狀態、工作、想問的事） */
+export interface ReadingContext {
+  relationship?: string;
+  work?: string;
+  concern?: string;
+  calendar?: "solar" | "lunar";
+  marketingOptIn?: boolean;
+}
+
+export interface Teaser { parts: { title: string; body: string }[]; model: string; generatedAt: string }
+
 export interface Reading {
   id: string;
   created_at: string;
@@ -19,6 +30,13 @@ export interface Reading {
   report: Report | null;
   report_status: "none" | "generating" | "done" | "failed";
   report_started_at?: string | null;
+  /** 商品代碼；舊資料為空，視為 classic */
+  product?: string | null;
+  context?: ReadingContext | null;
+  email?: string | null;
+  teaser?: Teaser | null;
+  teaser_status?: "none" | "generating" | "done" | "failed";
+  teaser_started_at?: string | null;
 }
 
 export interface Order {
@@ -58,10 +76,18 @@ function ensureLocalAllowed() {
 }
 
 // ---------- 對外介面 ----------
-export async function createReading(input: BirthInput, chart: Chart, utm: Record<string, string> | null): Promise<string> {
+export async function createReading(
+  input: BirthInput,
+  chart: Chart,
+  utm: Record<string, string> | null,
+  extra?: { product?: string; context?: ReadingContext; email?: string },
+): Promise<string> {
   const row: Reading = {
     id: crypto.randomUUID(), created_at: new Date().toISOString(), input, chart, utm,
     paid: false, paid_at: null, report: null, report_status: "none", report_started_at: null,
+    ...(extra?.product
+      ? { product: extra.product, context: extra.context ?? null, email: extra.email ?? null, teaser: null, teaser_status: "none" as const, teaser_started_at: null }
+      : {}),
   };
   const s = supa();
   if (s) {
@@ -117,6 +143,27 @@ export async function claimReportGeneration(id: string): Promise<boolean> {
   if (!r || !r.paid || r.report_status === "done") return false;
   if (r.report_status === "generating" && (r.report_started_at ?? "") > stale) return false;
   r.report_status = "generating"; r.report_started_at = now.toISOString(); await saveLocal(db); return true;
+}
+
+/** 搶佔免費預覽的生成權（不需付款）；同樣有 5 分鐘逾時可重搶 */
+export async function claimTeaserGeneration(id: string): Promise<boolean> {
+  const now = new Date();
+  const stale = new Date(now.getTime() - 5 * 60_000).toISOString();
+  const s = supa();
+  if (s) {
+    const { data, error } = await s.from("readings")
+      .update({ teaser_status: "generating", teaser_started_at: now.toISOString() })
+      .eq("id", id)
+      .or(`teaser_status.in.(none,failed),and(teaser_status.eq.generating,teaser_started_at.lt.${stale})`)
+      .select("id");
+    if (error) throw error;
+    return (data?.length ?? 0) > 0;
+  }
+  const db = await loadLocal();
+  const r = db.readings[id];
+  if (!r || r.teaser_status === "done") return false;
+  if (r.teaser_status === "generating" && (r.teaser_started_at ?? "") > stale) return false;
+  r.teaser_status = "generating"; r.teaser_started_at = now.toISOString(); await saveLocal(db); return true;
 }
 
 export async function createOrder(o: Omit<Order, "created_at" | "paid_at" | "payment_type" | "raw" | "status">) {

@@ -1,6 +1,7 @@
 // 八字排盤核心：以 lunar-javascript 依節氣計算四柱，再整理成前端與報告用的資料結構
 // eslint-disable-next-line @typescript-eslint/no-var-requires
 const { Solar } = require("lunar-javascript");
+import { findPlace, toTrueSolarTime, type SolarTimeResult } from "./solarTime";
 
 export type Gender = "male" | "female";
 export type Element = "木" | "火" | "土" | "金" | "水";
@@ -14,6 +15,8 @@ export interface BirthInput {
   day: number;
   hour: number | null; // null = 不知道時辰
   minute: number;
+  /** 出生地代碼（見 lib/solarTime.ts）；有值時以真太陽時排時柱 */
+  place?: string;
 }
 
 export interface Pillar {
@@ -53,6 +56,8 @@ export interface Chart {
   currentYear: { year: number; ganZhi: string; ganShiShen: string; zhiShiShen: string };
   currentDaYun: DaYun | null;
   hourKnown: boolean;
+  /** 有套用真太陽時才有值 */
+  solarTime?: SolarTimeResult | null;
 }
 
 // ---------- 基礎對照 ----------
@@ -107,7 +112,11 @@ export const SHISHEN_GROUP: Record<string, string> = {
 // ---------- 主程式 ----------
 export function computeChart(input: BirthInput, now = new Date()): Chart {
   const hourKnown = input.hour !== null;
-  const solar = Solar.fromYmdHms(input.year, input.month, input.day, hourKnown ? input.hour! : 12, hourKnown ? input.minute : 0, 0);
+  // 真太陽時：只在知道時辰、且出生地可校正時套用
+  const place = hourKnown ? findPlace(input.place) : null;
+  const st = place ? toTrueSolarTime({ year: input.year, month: input.month, day: input.day, hour: input.hour!, minute: input.minute }, place) : null;
+  const t0 = st ?? { year: input.year, month: input.month, day: input.day, hour: hourKnown ? input.hour! : 12, minute: hourKnown ? input.minute : 0 };
+  const solar = Solar.fromYmdHms(t0.year, t0.month, t0.day, t0.hour, t0.minute, 0);
   const lunar = solar.getLunar();
   const ec = lunar.getEightChar();
   ec.setSect(1); // 子初換日：23:00 起算隔日日柱
@@ -217,6 +226,7 @@ export function computeChart(input: BirthInput, now = new Date()): Chart {
     },
     currentDaYun: daYun.find((d) => thisYear >= d.startYear && thisYear <= d.endYear) ?? null,
     hourKnown,
+    solarTime: st,
   };
 }
 

@@ -1,6 +1,7 @@
 import { NextResponse } from "next/server";
 import { claimReportGeneration, getReading, updateReading } from "@/lib/db";
 import { generateReport } from "@/lib/report";
+import { generateMohengReport } from "@/lib/moheng";
 
 export const dynamic = "force-dynamic";
 export const maxDuration = 120; // Vercel：AI 生成約 30–60 秒
@@ -21,7 +22,7 @@ export async function POST(_: Request, { params }: { params: { id: string } }) {
   const claimed = await claimReportGeneration(r.id);
   if (!claimed) return NextResponse.json({ status: "generating" });
   try {
-    const report = await generateReport(r.chart);
+    const report = r.product === "moheng" ? await generateMohengReport(r) : await generateReport(r.chart);
     await updateReading(r.id, { report, report_status: "done" });
     return NextResponse.json({ status: "done", report });
   } catch {

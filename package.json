@@ -5,7 +5,7 @@
     "dev": "next dev",
     "build": "next build",
     "start": "next start",
-    "test": "npx -y tsx tests/ecpay.test.ts && npx -y tsx tests/bazi.test.ts"
+    "test": "npx -y tsx tests/ecpay.test.ts && npx -y tsx tests/bazi.test.ts && npx -y tsx --tsconfig tsconfig.json tests/moheng.test.ts"
   },
   "license": "UNLICENSED",
   "dependencies": {

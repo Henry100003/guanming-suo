@@ -11,6 +11,7 @@ export const metadata = { robots: { index: false } };
 export default async function ReportPage({ params, searchParams }: { params: { id: string }; searchParams: { paid?: string } }) {
   const r = await getReading(params.id);
   if (!r) notFound();
+  if (r.product === "moheng") redirect(`/m/${r.id}/report`);
   if (!r.paid) redirect(`/r/${r.id}#unlock`);
   const c = r.chart;
 

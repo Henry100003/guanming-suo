@@ -1,4 +1,4 @@
-import { notFound } from "next/navigation";
+import { notFound, redirect } from "next/navigation";
 import Link from "next/link";
 import ChartView from "@/components/ChartView";
 import PixelEvent from "@/components/PixelEvent";
@@ -12,6 +12,7 @@ export const metadata = { robots: { index: false } };
 export default async function ReadingPage({ params, searchParams }: { params: { id: string }; searchParams: { err?: string } }) {
   const r = await getReading(params.id);
   if (!r) notFound();
+  if (r.product === "moheng") redirect(`/m/${r.id}`);
   const c = r.chart;
   const f = extractFeatures(c);
 
